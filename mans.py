@@ -328,7 +328,7 @@ class mans():
                     self.hand = "Right Hand"
                     in_box = True
         
-        if in_box and not self.vatss and not self.chose_who:
+        if in_box and not self.vatss and not self.chose_who and self.state == "Normal":
             self.rhold = True
             if self.equipment[self.hand][0] == [None]:
                 self.draw_box([["Punch","Attack"]])
@@ -381,7 +381,7 @@ class mans():
             self.attack(self.hand,self.whoo,aimed_location)
             self.vatss = False
             
-        if self.menu and self.state == "Normal":
+        if self.menu:
             for i in list(self.options.keys()):
                 print(i)
                 print(mpos)
