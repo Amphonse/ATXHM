@@ -343,12 +343,15 @@ class mans():
         else:
             self.drawing = None
             self.menu =False
-    def left_click(self,enemies):
+    def left_click(self,enemies,tiles):
         print("HELLO",self.chose_who)
         #does the calcs for left clicking eg selecting from menu and vats and so on
         mpos = pygame.mouse.get_pos()
         if self.chose_who:
-            self.whoo = useful_fucs.Get_target(mpos,enemies,self)
+            if self.equipment[self.hand][0][0].atktype == "Melee":
+                self.whoo = useful_fucs.Get_target(mpos,enemies,self)
+            elif self.equipment[self.hand][0][0].atktype == "Ranged":
+                self.whoo = self.can_shoot(mpos,self.hand,tiles,enemies)
             #print(who)
             if self.whoo != None:
                 self.vatss = True

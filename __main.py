@@ -388,7 +388,7 @@ while True:
                     else:
                         if event.button == 1:
                             for i in selected:
-                                i.left_click(enemies)
+                                i.left_click(enemies,tiles)
                                 i.reset()
                                     
                             
@@ -403,7 +403,7 @@ while True:
                                     if is_moving == False:
                                         if i.state == "Normal":
                                             #print(menu)
-                                            i.left_click(enemies)
+                                            i.left_click(enemies,tiles)
                                             
                                             i.reset()
                     if event.button == 3:
