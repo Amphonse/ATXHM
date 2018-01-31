@@ -497,7 +497,7 @@ class Unit(mans.mans):
         iso_target = detect_clicked(target_coords)
         x = iso_target[0]-self.coords[0]
         y = iso_target[1]-self.coords[1]
-        if math.sqrt(x**2+y**2) <= 5*self.strength/100:
+        if math.sqrt(x**2+y**2) <= 5*self.strn/100:
             #print(self.coords)
             self_grid = convert_iso(self.coords,[0,0])
             #print(self_grid)
