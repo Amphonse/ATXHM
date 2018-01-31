@@ -370,7 +370,7 @@ class mans():
                 if self.whoo != None:
                     self.vatss = True
                     self.vats()
-                self.chose_who = False
+            self.chose_who = False
         elif self.vatss:
             if self.head_rekt.collidepoint(mpos):
                 aimed_location = "Head"
