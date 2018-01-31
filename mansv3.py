@@ -1,10 +1,8 @@
 import numpy as np
 import random,pygame
-import path_iso_copy
-import useful_fucs
 
-#dont know not my code
 def convert_iso_dots(r):
+    #converts grid coordinates to a blit friendly set of iso coordinates.
     y = r[1]*32
     x = r[0]*32
     x +=32
@@ -14,8 +12,9 @@ def convert_iso_dots(r):
 
     return (int(x),int(y))
 
+# in general do not need to check if items are in inv due to graphics
 
-#basic items class
+
 class items():
     def __init__(self,cost,weight,name):
         self.name = name
@@ -24,8 +23,7 @@ class items():
 
     def draw_self(self,screen):
         pygame.draw.circle(screen, (255,0,255), convert_iso_dots(self.coords), 3)
-#here follows item types which inheret the items above
-#this in general needs more stuff added as this is still kinda bare bones possibley
+
 class armor(items):
     def __init__(self,cost,weight,name,armor,location,health,cmod):
         super().__init__(cost,weight,name)
@@ -34,6 +32,7 @@ class armor(items):
         self.health = health
         self.cmod = cmod
         self.maxhealth = health
+#if they're on the ground, they have coords. Otherwise, the coords are = None
 class weepons(items):
     def __init__(self,cost,weight,name,dtype,atktype,dmg,ranges=0,coords= None):
         self.ranges = ranges
@@ -42,21 +41,20 @@ class weepons(items):
         self.atktype = atktype
         self.dmg = dmg
         self.coords = coords
-#this needs work
+
 class consumables(items):
     def __init__(self,cost,weight,name,charges,types,coords= None):
         super().__init__(cost,weight,name)
         self.charges = charges
         self.coords = coords
-#this needs work        
+        
 class shield(weepons):
     def __init_(self,cost,weight,name,dtype,atktype,dmg,shielding):
         super().__init__(cost,weight,name,dtype,atktype,dmg)
         self.shielding = shielding
-#main person calss
+
 class mans():
     def __init__(self,name,screen):
-        #here follows a ton of variables needed in later functions
         self.screen = screen
         self.vatss = False
         self.name = name
@@ -78,6 +76,7 @@ class mans():
         self.attacks = 1
         self.actions = 0
         self.tot_actions = 2
+        #self.endurance = 100
         self.limbs = {'Head':[100,1,armor(0,0,"Head armor of some sort",20,"Head",200,20),"Normal",10]
                       ,'Torso':[100,1,armor(0,0,"Basically a pillow",0,'Torso',100,5),"Normal",5]
                       ,'Vitals':[100,1,armor(0,0,"Basically a pillow",0,'Vitals',100,5),"Normal",20]
@@ -124,18 +123,10 @@ class mans():
         self.hand2_im.set_colorkey((255,255,255))
         self.hand2_rekt = self.head_im.get_rect()
         self.mpos = (0,0)
-        self.drawing = None
-        self.menu = False
-        self.chose_who = False
-        self.whoo = None
+        self.rhold = False
         self.resize()
     def get_hit(self,location,dmg,dtype):
-        #calculates dmg wounds shock and wound
-        #dmg is as it sounds
-        #wounds is a % of dmg and cause wound to slowly accumilate
-        #if wound >health they die
-        #shock makes it harder to wake up /easier to fall unconciouos is also a % of dmg
-        #variations depending on cutting,crushing or impaling dmg
+        #print(self.limbs[loc])
         odmg = dmg
         if dtype == "Crushing":
             if self.limbs[location][2].maxhealth>0:
@@ -162,11 +153,20 @@ class mans():
         self.wounds +=((dmg*self.limbs[location][1])*100/self.endurance)/10
         self.wound += ((dmg*self.limbs[location][1])*100/self.endurance)/5
         self.shock += ((dmg*self.limbs[location][1])*100/self.endurance)*self.limbs[location][4]
+        #if self.health<0:
+        #    self.state = "Dead"
+        #    print(self.state)
+        #elif self.health<30:
+        #    self.state = "Unconcious"
+        #    print(self.state)
+        #elif (dmg*self.limbs[location][1])*100/self.endurance > 50:
+        #    self.state = "Unconcious"
+        #    print(self.state)
         if self.health<0:
             self.health=0
         self.mupdate()
     def mupdate(self):
-        #does the stuff with wounds and does checks to see if dead
+        #self.actions = 0
         if self.state == "Normal":
             if self.health*self.endurance/100 < self.wound:
                 self.state = "Dead"
@@ -176,7 +176,10 @@ class mans():
                 print(self.state)
             else:
                 pass
+                #print("Awake")
         elif self.state == "Unconcious":
+            #print(self.wound)
+            #print(self.health*self.endurance/100)
             if self.health*self.endurance/100 < self.wound:
                 self.state = "Dead"
                 print(self.state)
@@ -185,6 +188,7 @@ class mans():
                 print(self.name+" wakes up")
             else:
                 pass
+                #print("Still Down")
         self.wound += (self.wounds-1)
         self.shock -= (self.endurance/20)
         if self.wound < 0:
@@ -193,28 +197,25 @@ class mans():
             self.wound = 100
         if self.shock < 0:
             self.shock = 0
-    def attack(self,hand,who,aimed_location,turns_aimed = 0,dist=0):
-        #assuming they aimed it will roll attack and defence and see who wins
-        if self.state == "Normal":
-            if aimed_location != None:
-                wep = self.equipment[hand][0][0]
-                if wep == None:
-                    wep = weepons(0,0,"Fisto","Crushing","Melee",5)
-                roll = random.random()*100
-                if wep.atktype == "Melee":
-                    self.margina = self.melee-roll
-                elif wep.atktype == "Ranged":
-                    self.margina = self.ranged-roll
-                who.defend()
-                if who.margind > self.margina:
-                    print(self.name+" missed "+who.name)
-                else:
-                    who.get_hit(aimed_location,wep.dmg,wep.dtype)
+    def attack(self,hand,who,aimed_location,turns_aimed = 0,dist=0):      
+        wep = self.equipment[hand][0][0]
+        if wep == None:
+            wep = weepons(0,0,"Fisto","Crushing","Melee",5)
+        roll = random.random()*100
+        if wep.atktype == "Melee":
+            self.margina = self.melee-roll
+        elif wep.atktype == "Ranged":
+            #have some mod for dist and turns aimed
+            self.margina = self.ranged-roll
+        who.defend()
+        if who.margind > self.margina:
+            print(self.name+" missed "+who.name)
+        else:
+            who.get_hit(aimed_location,wep.dmg,wep.dtype)
 
 
     def defend(self):
-        #when attacked this calc defence roll
-        #do only if normal
+        #only if normal
         roll = random.random()*100
         if self.equipment["Left Hand"] == None and self.equipment["Right Hand"] == None:
             self.margind = self.dodge-roll
@@ -232,11 +233,8 @@ class mans():
                 self.margind = self.parry-roll
             else:
                 self.margind = self.dodge-roll
-        if self.state != "Normal":
-            self.margind =0
                 
     def invman(self,what,froms,to):
-        #basic inventory management
         if self.equipment[to][0][0] == None:
             self.equipment[to][0] = [self.equipment[froms][what][0]]
         elif len(self.equipment[to][0]) < self.equipment[to][1]:
@@ -248,8 +246,9 @@ class mans():
 
         else:
             print(to + " full")
+        #print(self.equipment)
     def pick_up(self,what):
-        #just places something from floor to hand
+        #check if on floor same as below
         if self.equipment["Left Hand"][0] == [None]:
             self.equipment["Left Hand"][0] = [what]
             what.coords = None
@@ -259,10 +258,13 @@ class mans():
         else:
             print(self.name+ " has no free hands")
     def throw(self,withs,what,where):
-        #just sets what your thrwoing to none so it falls into the void
+        #accuracy off thrown
+        #range off strn
+        #do not need to check if on floor as no option should come up if not
         self.equipment[withs][0] = [None]
+        #store on appropriate tile
     def reset(self):
-        #redraws the ui
+        #draws basic self.screen
         pygame.draw.polygon(self.screen,(100,100,100),
                             ((self.prop*320+self.delta_x,self.prop*800+self.delta_y),
                              (self.prop*320+self.delta_x,self.prop*700+self.delta_y),
@@ -282,80 +284,130 @@ class mans():
         texts = self.font.render(self.name,False,(0,0,0))
         size  = self.font.size(self.name)
         self.screen.blit(texts,(int(self.prop*530+self.delta_x),int(self.prop*730+self.delta_y)-size[1]))
+        self.right_click(hold = self.rhold)
         if self.vatss:
             self.vats()
-        self.draw_box(self.drawing,self.menu)
         self.per_tick()
 
-    def draw_box(self,op,menu=True):
-        #draws a menu screen with option specified
-        if op != None and menu:
-            ops_size_x = []
-            ops_size_y = []
-            self.options = {}
-            for i in [g[0] for g in op] :
-                ops_size_x.append(self.font.size(i)[0])
-                ops_size_y.append(self.font.size(i)[1])
-            width = max(ops_size_x)
-            prev=list(self.mpos)
-            for i in range(len(op)):
-                pygame.draw.polygon(self.screen,(150,150,150),(prev,
-                                                              (prev[0]+width+int(self.prop*20),prev[1])
-                                                              ,(prev[0]+width+int(self.prop*20),prev[1]-(ops_size_y[i]+int(self.prop*20))),
-                                                              (prev[0],prev[1]-(ops_size_y[i]+int(self.prop*20)))),0)
-                pygame.draw.polygon(self.screen,(120,120,120),(prev,
-                                                      (prev[0]+width+int(self.prop*20),prev[1])
-                                                      ,(prev[0]+width+int(self.prop*20),prev[1]-(ops_size_y[i]+int(self.prop*20))),
-                                                      (prev[0],prev[1]-(ops_size_y[i]+int(self.prop*20)))),int(self.prop*5))
-                self.screen.blit(self.font.render([g[0] for g in op][i],False,(0,0,0)),(prev[0]+int(self.prop*10),prev[1]-int(self.prop*10)-ops_size_y[i]))
-                prev = (self.mpos[0],prev[1]-(ops_size_y[i]+int(self.prop*20)))
-                self.options[((prev[0],(prev[0]+width+int(self.prop*20))),(prev[1]+(ops_size_y[i]+int(self.prop*20)),prev[1]))]=[g[1] for g in op][i]
+    def draw_box(self,op):
+        ops_size_x = []
+        ops_size_y = []
+        self.options = {}
+        for i in [g[0] for g in op] :
+            ops_size_x.append(self.font.size(i)[0])
+            ops_size_y.append(self.font.size(i)[1])
+        width = max(ops_size_x)
+        prev=list(self.mpos)
+        for i in range(len(op)):
+            pygame.draw.polygon(self.screen,(150,150,150),(prev,
+                                                          (prev[0]+width+int(self.prop*20),prev[1])
+                                                          ,(prev[0]+width+int(self.prop*20),prev[1]-(ops_size_y[i]+int(self.prop*20))),
+                                                          (prev[0],prev[1]-(ops_size_y[i]+int(self.prop*20)))),0)
+            pygame.draw.polygon(self.screen,(120,120,120),(prev,
+                                                  (prev[0]+width+int(self.prop*20),prev[1])
+                                                  ,(prev[0]+width+int(self.prop*20),prev[1]-(ops_size_y[i]+int(self.prop*20))),
+                                                  (prev[0],prev[1]-(ops_size_y[i]+int(self.prop*20)))),int(self.prop*5))
+            self.screen.blit(self.font.render([g[0] for g in op][i],False,(0,0,0)),(prev[0]+int(self.prop*10),prev[1]-int(self.prop*10)-ops_size_y[i]))
+            prev = (self.mpos[0],prev[1]-(ops_size_y[i]+int(self.prop*20)))
+            self.options[(prev,(prev[0]+width+int(self.prop*20)),(prev[1],prev[1]-(ops_size_y[i]+int(self.prop*20))))]=[g[1] for g in op][i]
             
             
             
             
-    def right_click(self,mpos=None):
-        #does all the calculation realting to right clicking (oly what weps will do so far)
-        self.menu=False
+    def right_click(self,mpos=None,hold = True):
+        #solution is to have a function the draws a box
+        #like this currently does but for a more gneral
+        #case then call that draw function here then set
+        #a var true when rclicked in box flase otherwise
+        #false when lclick and draw when var
+        #is true but this will take awhile so can do this later
+        #what happend when right muse button is clicked
         if mpos != None:
             self.mpos = mpos
-        in_box = False
-        print(self.mpos[1],int(self.prop*700+self.delta_x),int(self.prop*801+self.delta_y))
-        if self.mpos[1] in range(int(self.prop*700+self.delta_y),int(self.prop*801+self.delta_y)):
-                if self.mpos[0] in range(int(self.prop*320+self.delta_x),int(self.prop*421+self.delta_x)):
-                    self.hand = "Left Hand"
-                    in_box = True
-                if self.mpos[0] in range(int(self.prop*860+self.delta_x),int(self.prop*961+self.delta_x)):
-                    self.hand = "Right Hand"
-                    in_box = True
-        
-        if in_box and not self.vatss and not self.chose_who:
-            self.rhold = True
-            if self.equipment[self.hand][0] == [None]:
-                self.draw_box([["Punch","Attack"]])
-                self.drawing = [["Punch","Attack"]]
-            elif self.equipment[self.hand][0][0].atktype == "Melee":
-                self.draw_box([["Melee Attack","Attack"],["Throw","Throw"]])
-                self.drawing = [["Throw","Throw"],["Melee Attack","Attack"]]
-            elif self.equipment[self.hand][0][0].atktype == "Ranged":
-                self.draw_box([["Ranged Attack","Attack"],["Throw","Throw"]])
-                self.drawing = [["Throw","Throw"],["Ranged Attack","Attack"]]
-            self.menu = True
-        else:
-            self.drawing = None
-            self.menu =False
-    def left_click(self,enemies):
-        print("HELLO",self.chose_who)
-        #does the calcs for left clicking eg selecting from menu and vats and so on
+        if hold:
+            in_box = False
+            print(self.mpos[1],int(self.prop*700+self.delta_x),int(self.prop*801+self.delta_y))
+            if self.mpos[1] in range(int(self.prop*700+self.delta_y),int(self.prop*801+self.delta_y)):
+                    if self.mpos[0] in range(int(self.prop*320+self.delta_x),int(self.prop*421+self.delta_x)):
+                        self.hand = "Left Hand"
+                        in_box = True
+                    if self.mpos[0] in range(int(self.prop*860+self.delta_x),int(self.prop*961+self.delta_x)):
+                        self.hand = "Right Hand"
+                        in_box = True
+            
+            if in_box:
+                self.rhold = True
+                if self.equipment[self.hand][0] == [None]:
+                    texts = self.font.render("Punch",False,(0,0,0))
+                    size  = self.font.size("Punch")
+                    
+                    pygame.draw.polygon(self.screen,(150,150,150),(self.mpos,
+                                                          (self.mpos[0]+size[0]+int(self.prop*20),self.mpos[1])
+                                                          ,(self.mpos[0]+size[0]+int(self.prop*20),self.mpos[1]-(size[1]+int(self.prop*20))),
+                                                          (self.mpos[0],self.mpos[1]-(size[1]+int(self.prop*20)))),0)
+                    pygame.draw.polygon(self.screen,(120,120,120),(self.mpos,
+                                                          (self.mpos[0]+size[0]+int(self.prop*20),self.mpos[1])
+                                                          ,(self.mpos[0]+size[0]+int(self.prop*20),self.mpos[1]-(size[1]+int(self.prop*20))),
+                                                          (self.mpos[0],self.mpos[1]-(size[1]+int(self.prop*20)))),int(self.prop*5))
+                    self.screen.blit(texts,(self.mpos[0]+int(self.prop*10),self.mpos[1]-int(self.prop*10)-size[1]))
+                    self.options={ ((self.mpos[0],self.mpos[0]+size[0]+int(self.prop*20)),(self.mpos[1],self.mpos[1]-(size[1]+int(self.prop*20)))) :"Attack"}
+                elif self.equipment[self.hand][0][0].atktype == "Melee":
+                    op1 = self.font.render("Melee Attack",False,(0,0,0))
+                    op2 = self.font.render("Throw",False,(0,0,0))
+                    op3 = self.font.render("Drop",False,(0,0,0))
+                    
+                    size1  = self.font.size("Melee Attack")
+                    size2  = self.font.size("Throw")
+                    size3  = self.font.size("Drop")
+                    heights = size1[1]+size2[1]+size3[1]+int(self.prop*20)
+                    widths = max(size1[0],size2[0],size3[0])
+                    pygame.draw.polygon(self.screen,(150,150,150),(self.mpos,
+                                                          (self.mpos[0]+widths+int(self.prop*20),self.mpos[1])
+                                                          ,(self.mpos[0]+widths+int(self.prop*20),self.mpos[1]-(heights+int(self.prop*20))),
+                                                          (self.mpos[0],self.mpos[1]-(heights+int(self.prop*20)))),0)
+                    pygame.draw.polygon(self.screen,(120,120,120),(self.mpos,
+                                                          (self.mpos[0]+widths+int(self.prop*20),self.mpos[1])
+                                                          ,(self.mpos[0]+widths+int(self.prop*20),self.mpos[1]-(heights+int(self.prop*20))),
+                                                          (self.mpos[0],self.mpos[1]-(heights+int(self.prop*20)))),int(self.prop*5))
+                    self.screen.blit(op3,(self.mpos[0]+int(self.prop*10),self.mpos[1]-int(self.prop*10)-size3[1]))
+                    self.screen.blit(op2,(self.mpos[0]+int(self.prop*10),self.mpos[1]-int(self.prop*20)-size2[1]-size3[1]))
+                    self.screen.blit(op1,(self.mpos[0]+int(self.prop*10),self.mpos[1]-int(self.prop*10)-heights))
+                    pygame.draw.line(self.screen,(120,120,120),(self.mpos[0],self.mpos[1]-size1[1]-int(self.prop*17.5)),(self.mpos[0]+widths+int(self.prop*20),self.mpos[1]-size1[1]-int(self.prop*17.5)),int(self.prop*5))
+                    pygame.draw.line(self.screen,(120,120,120),(self.mpos[0],self.mpos[1]-heights+int(self.prop*12.5)),(self.mpos[0]+widths+int(self.prop*20),self.mpos[1]-heights+int(self.prop*12.5)),int(self.prop*5))
+                    self.options={ ((self.mpos[0],self.mpos[0]+widths+int(self.prop*20)),(self.mpos[1],self.mpos[1]-size1[1]-int(self.prop*17.5))) :"Throw",
+                                   ((self.mpos[0],self.mpos[0]+widths+int(self.prop*20)),(self.mpos[1]-size1[1]-int(self.prop*17.5),self.mpos[1]-heights+int(self.prop*12.5))) :"Throw",
+                                   ((self.mpos[0],self.mpos[0]+widths+int(self.prop*20)),(self.mpos[1]-heights+int(self.prop*12.5),self.mpos[1]-self.mpos[1]-(heights+int(self.prop*20)))) :"Attack"}
+                elif self.equipment[self.hand][0][0].atktype == "Ranged":
+                    op1 = self.font.render("Ranged Attack",False,(0,0,0))
+                    op2 = self.font.render("Throw",False,(0,0,0))
+                    op3 = self.font.render("Drop",False,(0,0,0))
+                    
+                    size1  = self.font.size("Ranged Attack")
+                    size2  = self.font.size("Throw")
+                    size3  = self.font.size("Aim")
+                    heights = size1[1]+size2[1]+size3[1]+int(self.prop*20)
+                    widths = max(size1[0],size2[0],size3[0])
+                    pygame.draw.polygon(self.screen,(150,150,150),(mpos,
+                                                          (mpos[0]+widths+int(self.prop*20),mpos[1])
+                                                          ,(mpos[0]+widths+int(self.prop*20),mpos[1]-(heights+int(self.prop*20))),
+                                                          (mpos[0],mpos[1]-(heights+int(self.prop*20)))),0)
+                    pygame.draw.polygon(self.screen,(120,120,120),(mpos,
+                                                          (mpos[0]+widths+int(self.prop*20),mpos[1])
+                                                          ,(mpos[0]+widths+int(self.prop*20),mpos[1]-(heights+int(self.prop*20))),
+                                                          (mpos[0],mpos[1]-(heights+int(self.prop*20)))),int(self.prop*5))
+                    self.screen.blit(op3,(mpos[0]+int(self.prop*10),mpos[1]-int(self.prop*10)-size3[1]))
+                    self.screen.blit(op2,(mpos[0]+int(self.prop*10),mpos[1]-int(self.prop*20)-size2[1]-size3[1]))
+                    self.screen.blit(op1,(mpos[0]+int(self.prop*10),mpos[1]-int(self.prop*10)-heights))
+                    pygame.draw.line(self.screen,(120,120,120),(mpos[0],mpos[1]-size1[1]-int(self.prop*17.5)),(mpos[0]+widths+int(self.prop*20),mpos[1]-size1[1]-int(self.prop*17.5)),int(self.prop*5))
+                    pygame.draw.line(self.screen,(120,120,120),(mpos[0],mpos[1]-heights+int(self.prop*12.5)),(mpos[0]+widths+int(self.prop*20),mpos[1]-heights+int(self.prop*12.5)),int(self.prop*5))
+                    self.options={ ((mpos[0],mpos[0]+widths+int(self.prop*20)),(mpos[1],mpos[1]-size1[1]-int(self.prop*17.5))) :"Throw",
+                                   ((mpos[0],mpos[0]+widths+int(self.prop*20)),(mpos[1]-size1[1]-int(self.prop*17.5),mpos[1]-heights+int(self.prop*12.5))) :"Throw",
+                                   ((mpos[0],mpos[0]+widths+int(self.prop*20)),(mpos[1]-heights+int(self.prop*12.5),mpos[1]-mpos[1]-(heights+int(self.prop*20)))) :"Attack"}
+            return True
+    def left_click(self,who,menu):
+        self.rhold = False
         mpos = pygame.mouse.get_pos()
-        if self.chose_who:
-            self.whoo = useful_fucs.Get_target(mpos,enemies,self)
-            #print(who)
-            if self.whoo != None:
-                self.vatss = True
-                self.vats()
-            self.chose_who = False
-        elif self.vatss:
+        if self.vatss:
             if self.head_rekt.collidepoint(mpos):
                 aimed_location = "Head"
             elif self.torso_rekt.collidepoint(mpos):
@@ -377,25 +429,24 @@ class mans():
             elif self.hand2_rekt.collidepoint(mpos):
                 aimed_location = "Right Hand"
             else:
-                aimed_location = None
+                aimed_location  = "Torso"
             
-            self.attack(self.hand,self.whoo,aimed_location)
+            self.attack(self.hand,who,aimed_location)
             self.vatss = False
-            
-        if self.menu:
+        if menu:
             for i in list(self.options.keys()):
                 print(i)
                 print(mpos)
                 if mpos[0] >= i[0][0]  and mpos[0] <= i[0][1] and mpos[1] >= i[1][1] and mpos[1] <= i[1][0]:
-                    print(self.options[i])
+                    #print(self.options[i])
                     if self.options[i] == "Attack":
-                        self.chose_who = True
+                        self.vats()
+                        self.vatss = True
                     else:
                         self.throw(self.hand,0,0)
-        self.menu =False
     
     def per_tick(self):
-        #the update per_tick on the health bars and such
+        #520,860
         pygame.draw.line(self.screen,(50,50,50),(int(self.prop*520+self.delta_x),int(self.prop*760+self.delta_y)),(int(self.prop*860+self.delta_x),int(self.prop*760+self.delta_y)),int(self.prop*5))
         pygame.draw.line(self.screen,(255,0,0),(int(self.prop*523+self.delta_x),int(self.prop*750+self.delta_y)),(int(self.prop*857+self.delta_x),int(self.prop*750+self.delta_y)),int(self.prop*15))
         scale = int(334*self.health/100)
@@ -414,7 +465,6 @@ class mans():
         size  = self.font.size(self.state)
         self.screen.blit(texts,(int(self.prop*850+self.delta_x)-size[0],int(self.prop*730+self.delta_y)-size[1]))
     def resize(self):
-        #deals with resizeing screen
         swidth = self.screen.get_width()
         sheight = self.screen.get_height()
         propw = swidth/1280
@@ -448,8 +498,11 @@ class mans():
         self.hand1_rekt.inflate(-self.hand1_rekt.width+int(self.prop*75),int(self.prop*88)-self.hand1_rekt.height)
         self.hand2_rekt.center=(int(self.prop*516+self.delta_x)+self.hand2_rekt.width/2, int(self.prop*390+self.delta_y)+self.hand2_rekt.height/2)
         self.hand2_rekt.inflate(-self.hand2_rekt.width+int(self.prop*75),int(self.prop*88)-self.hand2_rekt.height)
-    def vats(self):
-        #draws video automated targeting system?
+        #print(self.delta_y)
+    def vats(self):#dont call this plz
+    #set_colorkey((255,255,255))
+    #image.load(name).convert()
+    #screen.blit(image,coords)
         pygame.draw.polygon(self.screen,((100,150,100)),((int(self.prop*500+self.delta_x),int(self.prop*180+self.delta_y))
                                                     ,(int(self.prop*830+self.delta_x),int(self.prop*180+self.delta_y))
                                                     ,(int(self.prop*830+self.delta_x),int(self.prop*560+self.delta_y))
@@ -465,6 +518,7 @@ class mans():
         self.screen.blit(pygame.transform.scale(self.rarm_im, (int(self.prop*84),int(self.prop*102))), (int(self.prop*526+self.delta_x), int(self.prop*288+self.delta_y)))
         self.screen.blit(pygame.transform.scale(self.hand1_im, (int(self.prop*39),int(self.prop*33))), (int(self.prop*759+self.delta_x), int(self.prop*390+self.delta_y)))
         self.screen.blit(pygame.transform.scale(self.hand2_im, (int(self.prop*39),int(self.prop*33))), (int(self.prop*516+self.delta_x), int(self.prop*390+self.delta_y)))
+        pygame.display.update()
 
         
             
