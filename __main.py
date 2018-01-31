@@ -388,9 +388,8 @@ while True:
                                 if i.moving == False:
                                     if is_moving == False:
                                         if i.state == "Normal":
-                                            #print(menu)
                                             i.left_click(enemies,tiles,floor_items)
-                                            
+                                                
                                             i.reset()
                     if event.button == 3:
                         if new_turn == False:
