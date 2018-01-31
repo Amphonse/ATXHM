@@ -492,6 +492,39 @@ class Unit(mans.mans):
         else:
             return None
 
+    def can_throw(self,target_coords,hand,tiles):
+        can_throw = True
+        iso_target = detect_clicked(target_coords)
+        x = iso_target[0]-self.coords[0]
+        y = iso_target[1]-self.coords[1]
+        if math.sqrt(x**2+y**2) <= self.equipment[str(hand)][0][0].ranges:
+            #print(self.coords)
+            self_grid = convert_iso(self.coords,[0,0])
+            #print(self_grid)
+            vect_x = target_coords[0]-self_grid[0]
+            vect_y = target_coords[1]-self_grid[1]
+            for i in range(50):
+                #print(i,"kjlllllllllllllllllllllllllllllllllllllll")
+                
+                dx = self_grid[0] + int(vect_x*(i/50))
+                dy = self_grid[1] + int(vect_y*(i/50))
+                #print(dx,dy,self_grid[0],self_grid[1],int(vect_x*(i/50)),int(vect_y*(i/50)))
+                test_tile_coords = detect_clicked([dx,dy])
+
+                for t in tiles:
+                    #print(t,"ggdhllghfghf")
+                    if t.vert == True:
+                        if t.coords == test_tile_coords:
+                            can_throw = False
+        else:
+            can_throw = False
+
+        if can_throw:
+            return iso_target
+            #return True
+        else:
+            return None
+
         
                         
                         
