@@ -92,7 +92,7 @@ class mans():
                       ,'Groin':[100,0.2,armor(0,0,"Godpiece",100,'Groin',100,0),"Normal",60]
                       }
         self.health = 100
-        self.equipment = {"Left Hand":[[None],1],"Right Hand":[[weepons(0,0,"The pow bow wow","Impaling","Ranged",20)],1],"Back":[[consumables(0,0,"Arrers",10,"Ammo")],5],"Belt":[[weepons(0,0,"Dagger","Cutting","Melee",100)],2]}
+        self.equipment = {"Left Hand":[[None],1],"Right Hand":[[weepons(0,0,"The pow bow wow","Impaling","Ranged",20,ranges=10000)],1],"Back":[[consumables(0,0,"Arrers",10,"Ammo")],5],"Belt":[[weepons(0,0,"Dagger","Cutting","Melee",100)],2]}
         self.head_im = pygame.image.load("Head.png").convert()
         self.head_im.set_colorkey((255,255,255))
         self.head_rekt = self.head_im.get_rect()
@@ -247,7 +247,8 @@ class mans():
 
         else:
             print(to + " full")
-    def pick_up(self,what):
+    def pick_up(self,what,floor):
+        floor.remove(what)
         #just places something from floor to hand
         if self.equipment["Left Hand"][0] == [None]:
             self.equipment["Left Hand"][0] = [what]
@@ -257,9 +258,14 @@ class mans():
             what.coords = None
         else:
             print(self.name+ " has no free hands")
-    def throw(self,withs,what,where):
+        return floor
+    def throw(self,withs,where,floor):
         #just sets what your thrwoing to none so it falls into the void
+        self.equipment[withs][0][0].coords = where
+        floor.append(self.equipment[withs][0][0])
         self.equipment[withs][0] = [None]
+        return floor
+        
     def reset(self):
         #redraws the ui
         pygame.draw.polygon(self.screen,(100,100,100),
@@ -343,20 +349,23 @@ class mans():
         else:
             self.drawing = None
             self.menu =False
-    def left_click(self,enemies,tiles):
+    def left_click(self,enemies,tiles,floor):
         print("HELLO",self.chose_who)
         #does the calcs for left clicking eg selecting from menu and vats and so on
         mpos = pygame.mouse.get_pos()
         if self.chose_who:
-            if self.equipment[self.hand][0][0].atktype == "Melee":
-                self.whoo = useful_fucs.Get_target(mpos,enemies,self)
-            elif self.equipment[self.hand][0][0].atktype == "Ranged":
-                self.whoo = self.can_shoot(mpos,self.hand,tiles,enemies)
-            #print(who)
-            if self.whoo != None:
-                self.vatss = True
-                self.vats()
-            self.chose_who = False
+            if self.thrwoing:
+                pass
+            else:
+                if self.equipment[self.hand][0][0].atktype == "Melee":
+                    self.whoo = useful_fucs.Get_target(mpos,enemies,self)
+                elif self.equipment[self.hand][0][0].atktype == "Ranged":
+                    self.whoo = self.can_shoot(mpos,self.hand,tiles,enemies)
+                #print(who)
+                if self.whoo != None:
+                    self.vatss = True
+                    self.vats()
+                self.chose_who = False
         elif self.vatss:
             if self.head_rekt.collidepoint(mpos):
                 aimed_location = "Head"
@@ -393,7 +402,9 @@ class mans():
                     if self.options[i] == "Attack":
                         self.chose_who = True
                     else:
-                        self.throw(self.hand,0,0)
+                        self.chose_who = True
+                        self.throwing = True
+                        #self.throw(self.hand,0,floor)
         self.menu =False
     
     def per_tick(self):
