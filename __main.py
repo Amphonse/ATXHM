@@ -337,6 +337,7 @@ while True:
                 choosing_attack = False
                 choosing_menu = False
                 choosing_loc = False
+                choosing_throwing = False
                 #for the map bit
                 pos = list(pygame.mouse.get_pos())
                 pos[0] = int((pos[0]-delta_x)/prop)
@@ -350,8 +351,10 @@ while True:
                             choosing_menu = True
                         elif u.vatss:
                             choosing_loc = True
+                        elif u.throwing:
+                            choosing_throwing = True
                             
-                    if choosing_attack==False and choosing_menu ==False and choosing_loc == False:
+                    if choosing_attack==False and choosing_menu ==False and choosing_loc == False and choosing_throwing == False:
                         iso_clicked = detect_clicked(pos)
                         if event.button == 1:
                             if new_turn == False:
@@ -445,6 +448,7 @@ while True:
             
         for i in units:
             i.draw_self(screen,prop,delta_x,delta_y)
+            
             i.update(tiles)
             if i.selected:
                 i.resize()
@@ -457,6 +461,14 @@ while True:
             else:
                 if i in selected:
                     selected.remove(i)
+
+            if choosing_throwing:
+                pass
+            #add a function to show all the available throwing tiles.
+            #this function will use a circle to reduce the number of
+            #tiles it needs to cycle through. All tiles within this
+            #circle that can_throw = True will be left unchanged. All others
+            #will have a red hash tile drawn on top of them.
         
         
                     
