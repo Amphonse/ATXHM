@@ -251,11 +251,8 @@ class mans():
     def pick_up(self,what,floor):
         floor.remove(what)
         #just places something from floor to hand
-        if self.equipment["Left Hand"][0] == [None]:
-            self.equipment["Left Hand"][0] = [what]
-            what.coords = None
-        elif self.equipment["Right Hand"][0] == [None]:
-            self.equipment["Right Hand"][0] = [what]
+        if self.equipment[self.hand][0] == [None]:
+            self.equipment[self.hand][0] = [what]
             what.coords = None
         else:
             print(self.name+ " has no free hands")
@@ -339,8 +336,8 @@ class mans():
         if in_box and not self.vatss and not self.chose_who and self.state == "Normal":
             self.rhold = True
             if self.equipment[self.hand][0] == [None]:
-                self.draw_box([["Punch","Attack"]])
-                self.drawing = [["Punch","Attack"]]
+                self.draw_box([["Punch","Attack"],["Pick up","Pick"]])
+                self.drawing = [["Punch","Attack"],["Pick up","Pick"]]
             elif self.equipment[self.hand][0][0].atktype == "Melee":
                 self.draw_box([["Melee Attack","Attack"],["Throw","Throw"]])
                 self.drawing = [["Throw","Throw"],["Melee Attack","Attack"]]
@@ -407,9 +404,15 @@ class mans():
                     print(self.options[i])
                     if self.options[i] == "Attack":
                         self.chose_who = True
-                    else:
+                    elif self.options[i] == "Throw":
                         self.chose_who = True
                         self.throwing = True
+                    elif self.options[i] == "Pick":
+                        for item in floor:
+                            if item.coords == self.coords:
+                                floor = self.pick_up(item,floor)
+                                #print(i.equipment[self.hand])
+                
                         #self.throw(self.hand,0,floor)
         self.menu =False
         return floor
