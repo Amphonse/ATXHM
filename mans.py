@@ -359,6 +359,7 @@ class mans():
             if self.throwing:
                 floor = self.throw(self.hand,self.can_throw(mpos,self.hand,tiles),floor)
                 self.throwing = False
+                self.chose_who = False
             else:
                 if self.equipment[self.hand][0][0] == None:
                     self.whoo = useful_fucs.Get_target(mpos,enemies,self)
@@ -370,7 +371,7 @@ class mans():
                 if self.whoo != None:
                     self.vatss = True
                     self.vats()
-            self.chose_who = False
+                self.chose_who = False
         elif self.vatss:
             if self.head_rekt.collidepoint(mpos):
                 aimed_location = "Head"
