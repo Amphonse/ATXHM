@@ -370,13 +370,16 @@ while True:
                                         if is_moving == False:
                                             if i.state == "Normal":
                                                 if tuple(iso_clicked) != tuple(i.coords):
+                                                
                                                     i.move_to(iso_clicked,pf_info[0],pf_info[1],units,enemies,tiles)
                     else:
                         if event.button == 1:
                             for i in selected:
                                 i.left_click(enemies,tiles,floor_items)
                                 i.reset()
-                                    
+                        elif event.button == 3:
+                            for i in selected:
+                                i.right_click(list(pygame.mouse.get_pos()))
                             
                 #for the tooltip bit
                 else:
@@ -401,7 +404,7 @@ while True:
                                             i.right_click(list(pygame.mouse.get_pos()))
                                             
 
-## DONT UPDATE THE SCREEN WHEN IN MATYAS'S MENU! 
+ 
                     
         screen.fill((0,0,0))
         #for i in first_blit:
