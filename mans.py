@@ -125,6 +125,7 @@ class mans():
         self.hand2_rekt = self.head_im.get_rect()
         self.mpos = (0,0)
         self.drawing = None
+        self.throwing = False
         self.menu = False
         self.chose_who = False
         self.whoo = None
@@ -354,8 +355,8 @@ class mans():
         #does the calcs for left clicking eg selecting from menu and vats and so on
         mpos = pygame.mouse.get_pos()
         if self.chose_who:
-            if self.thrwoing:
-                pass
+            if self.throwing:
+                self.throwing = False
             else:
                 if self.equipment[self.hand][0][0].atktype == "Melee":
                     self.whoo = useful_fucs.Get_target(mpos,enemies,self)
