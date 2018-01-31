@@ -188,9 +188,9 @@ class Controler:
                         i.move_to(units[0].coords,pf_info[0],pf_info[1],units,enemies,tiles)
                         #\/ very rough attacking logic.
                         for coord in path_iso_copy.neighbours(i.coords):
-                            for unit in units:
-                                if tuple(unit.coords) == tuple(coord):
-                                    i.attack("Left Hand",unit.man)
+                            for u in units:
+                                if tuple(u.coords) == tuple(coord):
+                                    i.attack("Left Hand",u)
                 except:
                     pass
                 
