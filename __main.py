@@ -332,20 +332,7 @@ while True:
                 if event.key == pygame.K_r:
                     for i in tiles:
                         i.visited = True
-                if event.key == pygame.K_p:#Melee Attack
-                    #print("1")
-                    if new_turn == False:
-                        if is_moving == False:
-                            for i in units:
-                                if i.selected:
-                                    if i.state == "Normal":
-                                        if i.actions < i.tot_actions:
-                                            for item in floor_items:
-                                                if item.coords == i.coords:
-                                                    floor_items = i.pick_up(item,floor_items)
-                                                    print(i.equipment["Left Hand"])
-                                                    i.actions += 1
-                            
+                                           
             if event.type == pygame.MOUSEBUTTONUP:
                 choosing_attack = False
                 choosing_menu = False
@@ -387,7 +374,7 @@ while True:
                     else:
                         if event.button == 1:
                             for i in selected:
-                                floor_items = i.left_click(enemies,tiles,floor_items)
+                                i.left_click(enemies,tiles,floor_items)
                                 i.reset()
                                     
                             
@@ -402,7 +389,7 @@ while True:
                                     if is_moving == False:
                                         if i.state == "Normal":
                                             #print(menu)
-                                            floor_items = i.left_click(enemies,tiles,floor_items)
+                                            i.left_click(enemies,tiles,floor_items)
                                             
                                             i.reset()
                     if event.button == 3:
