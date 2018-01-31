@@ -461,14 +461,16 @@ while True:
             else:
                 if i in selected:
                     selected.remove(i)
-
-            if choosing_throwing:
+            try:
+                if choosing_throwing:
+                    pass
+                #add a function to show all the available throwing tiles.
+                #this function will use a circle to reduce the number of
+                #tiles it needs to cycle through. All tiles within this
+                #circle that can_throw = True will be left unchanged. All others
+                #will have a red hash tile drawn on top of them.
+            except:
                 pass
-            #add a function to show all the available throwing tiles.
-            #this function will use a circle to reduce the number of
-            #tiles it needs to cycle through. All tiles within this
-            #circle that can_throw = True will be left unchanged. All others
-            #will have a red hash tile drawn on top of them.
         
         
                     
