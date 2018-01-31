@@ -195,20 +195,21 @@ class mans():
             self.shock = 0
     def attack(self,hand,who,aimed_location,turns_aimed = 0,dist=0):
         #assuming they aimed it will roll attack and defence and see who wins
-        if aimed_location != None:
-            wep = self.equipment[hand][0][0]
-            if wep == None:
-                wep = weepons(0,0,"Fisto","Crushing","Melee",5)
-            roll = random.random()*100
-            if wep.atktype == "Melee":
-                self.margina = self.melee-roll
-            elif wep.atktype == "Ranged":
-                self.margina = self.ranged-roll
-            who.defend()
-            if who.margind > self.margina:
-                print(self.name+" missed "+who.name)
-            else:
-                who.get_hit(aimed_location,wep.dmg,wep.dtype)
+        if self.state == "Normal":
+            if aimed_location != None:
+                wep = self.equipment[hand][0][0]
+                if wep == None:
+                    wep = weepons(0,0,"Fisto","Crushing","Melee",5)
+                roll = random.random()*100
+                if wep.atktype == "Melee":
+                    self.margina = self.melee-roll
+                elif wep.atktype == "Ranged":
+                    self.margina = self.ranged-roll
+                who.defend()
+                if who.margind > self.margina:
+                    print(self.name+" missed "+who.name)
+                else:
+                    who.get_hit(aimed_location,wep.dmg,wep.dtype)
 
 
     def defend(self):
