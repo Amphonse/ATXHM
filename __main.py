@@ -190,7 +190,7 @@ class Controler:
                         for coord in path_iso_copy.neighbours(i.coords):
                             for u in units:
                                 if tuple(u.coords) == tuple(coord):
-                                    i.attack("Left Hand",u)
+                                    i.attack("Left Hand",u,"Torso")
                 except:
                     pass
                 
