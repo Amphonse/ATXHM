@@ -261,10 +261,11 @@ class mans():
             print(self.name+ " has no free hands")
         return floor
     def throw(self,withs,where,floor):
-        #just sets what your thrwoing to none so it falls into the void
-        self.equipment[withs][0][0].coords = where
-        floor.append(self.equipment[withs][0][0])
-        self.equipment[withs][0] = [None]
+        if where != None:
+            #just sets what your thrwoing to none so it falls into the void
+            self.equipment[withs][0][0].coords = where
+            floor.append(self.equipment[withs][0][0])
+            self.equipment[withs][0] = [None]
         return floor
         
     def reset(self):
@@ -356,6 +357,7 @@ class mans():
         mpos = pygame.mouse.get_pos()
         if self.chose_who:
             if self.throwing:
+                floor = self.throw(self.hand,self.can_throw(mpos,self.hand,tiles),floor)
                 self.throwing = False
             else:
                 if self.equipment[self.hand][0][0].atktype == "Melee":
@@ -407,6 +409,7 @@ class mans():
                         self.throwing = True
                         #self.throw(self.hand,0,floor)
         self.menu =False
+        return floor
     
     def per_tick(self):
         #the update per_tick on the health bars and such
