@@ -319,6 +319,8 @@ class mans():
             
             
     def right_click(self,mpos=None):
+        self.throwing = False
+        self.chose_who = False
         #does all the calculation realting to right clicking (oly what weps will do so far)
         self.menu=False
         if mpos != None:
@@ -355,8 +357,9 @@ class mans():
         if self.chose_who:
             if self.throwing:
                 floor = self.throw(self.hand,self.can_throw(mpos,self.hand,tiles),floor)
-                self.throwing = False
-                self.chose_who = False
+                if self.can_throw(mpos,self.hand,tiles) != None:
+                    self.throwing=False
+                    self.chose_who = False
             else:
                 if self.equipment[self.hand][0][0] == None:
                     self.whoo = useful_fucs.Get_target(mpos,enemies,self)
@@ -368,7 +371,7 @@ class mans():
                 if self.whoo != None:
                     self.vatss = True
                     self.vats()
-                self.chose_who = False
+                    self.chose_who = False
         elif self.vatss:
             if self.head_rekt.collidepoint(mpos):
                 aimed_location = "Head"
@@ -418,6 +421,13 @@ class mans():
         return floor
     
     def per_tick(self):
+        #fonts = pygame.font.SysFont("Palatino Linotype",int(self.prop*15))
+        #self.draw_bar(100,434,200,15,self.endurance,150,(0,0,255),(0,0,5),fonts,(255,0,255))
+        #self.draw_bar(100,434,215,15,self.strn,150,(0,0,205),(0,0,55),fonts,(255,0,255))
+        #self.draw_bar(100,434,230,15,self.movment,150,(0,0,155),(0,0,104),fonts,(255,0,255))
+        #self.draw_bar(100,434,245,15,self.ranged,150,(0,0,105),(0,0,155),fonts,(255,0,255))
+        #self.draw_bar(100,434,260,15,self.melee,150,(0,0,55),(0,0,205),fonts,(255,0,255))
+        #self.draw_bar(100,434,275,15,self.thrown,150,(0,0,5),(0,0,255),fonts,(255,0,255))
         #the update per_tick on the health bars and such
         pygame.draw.line(self.screen,(50,50,50),(int(self.prop*520+self.delta_x),int(self.prop*760+self.delta_y)),(int(self.prop*860+self.delta_x),int(self.prop*760+self.delta_y)),int(self.prop*5))
         pygame.draw.line(self.screen,(255,0,0),(int(self.prop*523+self.delta_x),int(self.prop*750+self.delta_y)),(int(self.prop*857+self.delta_x),int(self.prop*750+self.delta_y)),int(self.prop*15))
@@ -489,9 +499,18 @@ class mans():
         self.screen.blit(pygame.transform.scale(self.hand1_im, (int(self.prop*39),int(self.prop*33))), (int(self.prop*759+self.delta_x), int(self.prop*390+self.delta_y)))
         self.screen.blit(pygame.transform.scale(self.hand2_im, (int(self.prop*39),int(self.prop*33))), (int(self.prop*516+self.delta_x), int(self.prop*390+self.delta_y)))
 
-        
-            
+    def draw_bar(self,lx,rx,by,hy,attr,attr_max,color1,color2,fonts,text_color):
+        #pygame.draw.line(self.screen,(50,50,50),(int(self.prop*lx+self.delta_x),int(self.prop*by+self.delta_y)),(int(self.prop*rx+self.delta_x),int(self.prop*by+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,color2,(int(self.prop*lx+self.delta_x),int(self.prop*by+self.delta_y)),(int(self.prop*rx+self.delta_x),int(self.prop*by+self.delta_y)),int(self.prop*hy))
+        scale = int((rx-lx)*attr/attr_max)
+        if attr>0:
+            pygame.draw.line(self.screen,color1,(int(self.prop*lx+self.delta_x),int(self.prop*by+self.delta_y)),(int(self.prop*(lx+scale)+self.delta_x),int(self.prop*by+self.delta_y)),int(self.prop*hy))
+        texts = fonts.render(str(int(attr)),False,text_color)
+        size  = fonts.size(str(int(attr)))
+        self.screen.blit(texts,(int(self.prop*((-size[0]/2)+lx+(rx-lx)/2)+self.delta_x),int(self.prop*(by+self.delta_y)-size[1]/2)))
 
+            
+        
         
 
         
