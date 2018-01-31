@@ -342,7 +342,7 @@ while True:
                                         if i.actions < i.tot_actions:
                                             for item in floor_items:
                                                 if item.coords == i.coords:
-                                                    floor_items = i.pick_up(item)
+                                                    floor_items = i.pick_up(item,floor_items)
                                                     print(i.equipment["Left Hand"])
                                                     i.actions += 1
                             
