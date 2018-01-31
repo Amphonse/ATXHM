@@ -360,7 +360,9 @@ class mans():
                 floor = self.throw(self.hand,self.can_throw(mpos,self.hand,tiles),floor)
                 self.throwing = False
             else:
-                if self.equipment[self.hand][0][0].atktype == "Melee":
+                if self.equipment[self.hand][0][0] = None:
+                    self.whoo = useful_fucs.Get_target(mpos,enemies,self)
+                elif self.equipment[self.hand][0][0].atktype == "Melee":
                     self.whoo = useful_fucs.Get_target(mpos,enemies,self)
                 elif self.equipment[self.hand][0][0].atktype == "Ranged":
                     self.whoo = self.can_shoot(mpos,self.hand,tiles,enemies)
