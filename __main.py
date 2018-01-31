@@ -342,8 +342,7 @@ while True:
                                         if i.actions < i.tot_actions:
                                             for item in floor_items:
                                                 if item.coords == i.coords:
-                                                    i.pick_up(item)
-                                                    floor_items.remove(item)
+                                                    floor_items = i.pick_up(item)
                                                     print(i.equipment["Left Hand"])
                                                     i.actions += 1
                             
@@ -388,7 +387,7 @@ while True:
                     else:
                         if event.button == 1:
                             for i in selected:
-                                i.left_click(enemies,tiles)
+                                i.left_click(enemies,tiles,floor_items)
                                 i.reset()
                                     
                             
@@ -403,7 +402,7 @@ while True:
                                     if is_moving == False:
                                         if i.state == "Normal":
                                             #print(menu)
-                                            i.left_click(enemies,tiles)
+                                            i.left_click(enemies,tiles,floor_items)
                                             
                                             i.reset()
                     if event.button == 3:
