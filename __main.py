@@ -427,7 +427,7 @@ while True:
          #       i.draw_self(screen,tiles,prop,delta_x,delta_y)
         #for i in second_blit:
          #   if type(i) == Tile:
-         #       i.draw_self()
+         #       i.draw_self()s
          #   elif type(i)== unit.Unit:
          #       i.draw_self(screen,prop,delta_x,delta_y)
         #    elif type(i)== unit.Enemy:
