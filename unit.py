@@ -457,7 +457,7 @@ class Unit(mans.mans):
                     self.og_len_test_path_l = 0
                 self.old_pos_test = pos
 
-    def can_shoot(self,target_coords,hand,tiles):
+    def can_shoot(self,target_coords,hand,tiles,enemies):
         can_shoot = True
         iso_target = detect_clicked(target_coords)
         x = iso_target[0]-self.coords[0]
@@ -478,9 +478,12 @@ class Unit(mans.mans):
             can_shoot = False
 
         if can_shoot:
-            return True
+            for e in enemies:
+                if tuple(e.coords) == tuple(iso_target):
+                    return e
+            #return True
         else:
-            return False
+            return None
 
         
                         
