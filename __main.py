@@ -111,6 +111,7 @@ class Tile():
         self.is_Passable = False
         self.vert = False
         self.visited = False
+        self.throwable = False
         #each tile has a code that defines what type of tile it is.
         if code == "G":         
             self.cost = 1
@@ -143,8 +144,14 @@ class Tile():
         self.undiscovered_image.set_colorkey((255,255,255))
 
 
-    def draw_self(self):
+    def draw_self(self,is_throwing):
         if self.visited == True:
+            if is_throwing == True:
+                print("drawwwwwwwwww")
+                if self.throwable == True:
+                    blit_coords = convert_iso(self.coords)
+                    screen.blit(pygame.transform.scale("No_Throw.png",(int(64*prop),int(64*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
+            
             if self.vert:
                 blit_coords = convert_iso([self.coords[0],self.coords[1]-1])
                 screen.blit(pygame.transform.scale(self.image,(int(64*prop),int(64*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
@@ -285,6 +292,7 @@ while True:
         resize()
         new_turn = False
         is_moving = False
+        choosing_throwing = False
         
         for i in units:
             if i.moving == True:
@@ -332,18 +340,19 @@ while True:
                 if event.key == pygame.K_r:
                     for i in tiles:
                         i.visited = True
-                                           
+
             if event.type == pygame.MOUSEBUTTONUP:
                 choosing_attack = False
                 choosing_menu = False
                 choosing_loc = False
                 choosing_throwing = False
+                other_mode = False
                 #for the map bit
                 pos = list(pygame.mouse.get_pos())
                 pos[0] = int((pos[0]-delta_x)/prop)
                 pos[1] = int((pos[1]-delta_y)/prop)
                 if pos[1] < ((800*prop)*7/8)-delta_y:
-                    print("llleeeellelee")
+                #print("llleeeellelee")
                     for u in units:
                         if u.chose_who:
                             choosing_attack = True
@@ -351,38 +360,76 @@ while True:
                             choosing_menu = True
                         elif u.vatss:
                             choosing_loc = True
-                        elif u.throwing:
-                            choosing_throwing = True
+                        if u.selected == True:
+                            if u.stats_page == True:
+                                if u.st_x < list(pygame.mouse.get_pos())[0] and list(pygame.mouse.get_pos())[0] <u.st_x + 300:
+                                    if u.st_y-15 < list(pygame.mouse.get_pos())[1] and list(pygame.mouse.get_pos())[1]<u.st_y + 300:
+                                        other_mode = True
+                                    else:
+                                        other_mode = False
+                                else:
+                                    other_mode = False
+                        #if u.throwing:
+                        #    print("We ARE throwing!")
+                        #    choosing_throwing = True
                             
-                    if choosing_attack==False and choosing_menu ==False and choosing_loc == False and choosing_throwing == False:
-                        iso_clicked = detect_clicked(pos)
+                    if other_mode == False:        
+                        if choosing_attack==False and choosing_menu ==False and choosing_loc == False and choosing_throwing == False:
+                            iso_clicked = detect_clicked(pos)
+                            if event.button == 1:
+                                if new_turn == False:
+                                    for i in tiles:
+                                        if i.coords == iso_clicked:
+                                            i.print_self()
+                                    for i in units:
+                                        if is_moving == False:
+                                            i.det_selected(pos)
+                            elif event.button == 3:
+                                #print(selected)
+                                if new_turn == False:
+                                    for i in selected:
+                                        #print("hey")
+                                        if i.moving == False:
+                                            if is_moving == False:
+                                                if i.state == "Normal":
+                                                    if tuple(iso_clicked) != tuple(i.coords):
+                                                    
+                                                        i.move_to(iso_clicked,pf_info[0],pf_info[1],units,enemies,tiles)
+                        else:
+                            #if choosing_throwing:
+                            for tile in tiles:
+                                for u in units:
+                                    if u.selected:
+                                        if u.can_throw(convert_iso(tile.coords),u.hand,tiles)!= None:
+                                            print("ehhh")
+                                            tile.throwable = True
+                            if event.button == 1:
+                                for i in selected:
+                                    i.left_click(enemies,tiles,floor_items)
+                                    i.reset()
+                            elif event.button == 3:
+                                for i in selected:
+                                    i.right_click(list(pygame.mouse.get_pos()))
+                    else:
                         if event.button == 1:
-                            if new_turn == False:
-                                for i in tiles:
-                                    if i.coords == iso_clicked:
-                                        i.print_self()
-                                for i in units:
-                                    if is_moving == False:
-                                        i.det_selected(pos)
-                        elif event.button == 3:
-                            #print(selected)
                             if new_turn == False:
                                 for i in selected:
                                     #print("hey")
                                     if i.moving == False:
                                         if is_moving == False:
                                             if i.state == "Normal":
-                                                if tuple(iso_clicked) != tuple(i.coords):
-                                                
-                                                    i.move_to(iso_clicked,pf_info[0],pf_info[1],units,enemies,tiles)
-                    else:
-                        if event.button == 1:
-                            for i in selected:
-                                i.left_click(enemies,tiles,floor_items)
-                                i.reset()
-                        elif event.button == 3:
-                            for i in selected:
-                                i.right_click(list(pygame.mouse.get_pos()))
+                                                i.left_click(enemies,tiles,floor_items)
+                                                    
+                                                i.reset()
+                        if event.button == 3:
+                            if new_turn == False:
+                                for i in selected:
+                                    #print("hey")
+                                    if i.moving == False:
+                                        if is_moving == False:
+                                            if i.state == "Normal":
+                                                i.right_click(list(pygame.mouse.get_pos()))
+                        
                             
                 #for the tooltip bit
                 else:
@@ -433,7 +480,7 @@ while True:
        #         i.draw_self(screen,tiles,prop,delta_x,delta_y)
         for tile in tiles:
             if tile not in tall_tiles:
-                tile.draw_self()
+                tile.draw_self(choosing_throwing)
 
         for i in floor_items:
             if i.coords != None:
@@ -444,10 +491,14 @@ while True:
             i.update()
 
         for i in tall_tiles:
-            i.draw_self()
+            i.draw_self(choosing_throwing)
             
         for i in units:
             i.draw_self(screen,prop,delta_x,delta_y)
+
+            if i.throwing:
+                #print("We ARE throwing!")
+                choosing_throwing = True
             
             i.update(tiles)
             if i.selected:
@@ -462,8 +513,12 @@ while True:
                 if i in selected:
                     selected.remove(i)
             try:
-                if choosing_throwing:
-                    pass
+                pass
+                #if choosing_throwing:
+                #    for tile in tiles:
+                #        if i.can_throw(convert_iso(tile.coords),i.hand,tiles):
+                            
+                        
                 #add a function to show all the available throwing tiles.
                 #this function will use a circle to reduce the number of
                 #tiles it needs to cycle through. All tiles within this
