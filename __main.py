@@ -142,23 +142,24 @@ class Tile():
         self.image.set_colorkey((255,255,255))
         self.undiscovered_image = pygame.image.load("3_black.png").convert()
         self.undiscovered_image.set_colorkey((255,255,255))
+        self.no_throw_image = pygame.image.load("No_Throw.png").convert()
+        self.no_throw_image.set_colorkey((255,255,255))
 
 
     def draw_self(self,is_throwing):
         if self.visited == True:
-            if is_throwing == True:
-                #print("drawwwwwwwwww")
-                if self.throwable == True:
-                    
-                    blit_coords = convert_iso(self.coords)
-                    screen.blit(pygame.transform.scale("No_Throw.png",(int(64*prop),int(64*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
-            
             if self.vert:
                 blit_coords = convert_iso([self.coords[0],self.coords[1]-1])
                 screen.blit(pygame.transform.scale(self.image,(int(64*prop),int(64*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
             else:
                 blit_coords = convert_iso(self.coords)
                 screen.blit(pygame.transform.scale(self.image,(int(64*prop),int(32*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
+            if is_throwing == True:
+                #print("drawwwwwwwwww")
+                if self.throwable != True:
+                    
+                    blit_coords = convert_iso(self.coords)
+                    screen.blit(pygame.transform.scale(self.no_throw_image,(int(64*prop),int(32*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
         else:
             screen.blit(self.undiscovered_image,convert_iso(self.coords))
             

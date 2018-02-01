@@ -369,7 +369,7 @@ class mans():
         if self.chose_who:
             if self.throwing:
                 floor = self.throw(self.can_throw(mpos,tiles,self.hand),floor,self.hand)
-                if self.can_throw(mpos,self.hand,tiles) != None:
+                if self.can_throw(mpos,tiles,self.hand) != None:
                     self.throwing=False
                     self.chose_who = False
             else:
