@@ -368,7 +368,7 @@ class mans():
         print(self.st_x,mpos[0],self.st_y,mpos[1])
         if self.chose_who:
             if self.throwing:
-                floor = self.throw(self.can_throw(mpos,self.hand,tiles),floor,self.hand)
+                floor = self.throw(self.can_throw(mpos,tiles,self.hand),floor,self.hand)
                 if self.can_throw(mpos,self.hand,tiles) != None:
                     self.throwing=False
                     self.chose_who = False
