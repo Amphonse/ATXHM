@@ -130,8 +130,10 @@ class mans():
         self.throwing = False
         self.stats_page =  False
         self.menu = False
+        self.screen_move = False
         self.chose_who = False
         self.whoo = None
+        self.prev_mpos = (0,0)
         self.resize()
     def get_hit(self,location,dmg,dtype):
         #calculates dmg wounds shock and wound
@@ -363,6 +365,7 @@ class mans():
         print("HELLO",self.chose_who)
         #does the calcs for left clicking eg selecting from menu and vats and so on
         mpos = pygame.mouse.get_pos()
+        print(self.st_x,mpos[0],self.st_y,mpos[1])
         if self.chose_who:
             if self.throwing:
                 floor = self.throw(self.hand,self.can_throw(mpos,self.hand,tiles),floor)
@@ -433,6 +436,13 @@ class mans():
         elif self.stats_page:
             if mpos[0] in range(int(self.prop*(self.st_x+285)+self.delta_x),int(self.prop*(self.st_x+300)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.st_y-30)+self.delta_y),int(self.prop*(self.st_y-15)+self.delta_y)):
                 self.stats_page = False
+            if mpos[0] in range(int(self.prop*(self.st_x)+self.delta_x),int(self.prop*(self.st_x+285)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.st_y-30)+self.delta_y),int(self.prop*(self.st_y-15)+self.delta_y)):
+                if not self.screen_move:
+                    self.screen_move=True
+                elif self.screen_move:
+                    self.screen_move=False
+                
+                
             
         
             
@@ -440,6 +450,7 @@ class mans():
         return floor
     
     def per_tick(self):
+        mpos = pygame.mouse.get_pos()
         #self.stats_pg(100,100)
         #fonts = pygame.font.SysFont("Palatino Linotype",int(self.prop*15))
         #self.draw_bar(100,434,200,15,self.endurance,150,(0,0,255),(0,0,5),fonts,(255,0,255))
@@ -466,6 +477,12 @@ class mans():
         texts = self.font.render(self.state,False,(0,0,0))
         size  = self.font.size(self.state)
         self.screen.blit(texts,(int(self.prop*850+self.delta_x)-size[0],int(self.prop*730+self.delta_y)-size[1]))
+        if self.screen_move:
+            chy = mpos[1]-self.prev_mpos[1]
+            chx = mpos[0]-self.prev_mpos[0]
+            self.st_x += chx
+            self.st_y += chy
+        self.prev_mpos = mpos
     def resize(self):
         #deals with resizeing screen
         swidth = self.screen.get_width()
