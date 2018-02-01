@@ -558,7 +558,7 @@ class mans():
         self.draw_bar(lx,lx+300,by+210,30,self.strn,100,(255,127,0),(238,203,173),fonts,(179,238,58))
         self.draw_bar(lx,lx+300,by+240,30,self.movment,100,(255,127,0),(238,203,173),fonts,(179,238,58))
         self.draw_bar(lx,lx+300,by+270,30,self.thrown,100,(255,127,0),(238,203,173),fonts,(179,238,58))
-        self.draw_bar(lx,lx+300,by+300,30,self.thrown,100,(205,0,0),(205,92,92),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+300,30,self.endurance,100,(205,0,0),(205,92,92),fonts,(179,238,58))
         pygame.draw.polygon(self.screen,(255,0,0),((int(self.prop*(lx+285)+self.delta_x),int(self.prop*(by-30)+self.delta_y)),
                                                       (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by-30)+self.delta_y)),
                                                         (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by-15)+self.delta_y)),
