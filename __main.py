@@ -147,8 +147,9 @@ class Tile():
     def draw_self(self,is_throwing):
         if self.visited == True:
             if is_throwing == True:
-                print("drawwwwwwwwww")
+                #print("drawwwwwwwwww")
                 if self.throwable == True:
+                    
                     blit_coords = convert_iso(self.coords)
                     screen.blit(pygame.transform.scale("No_Throw.png",(int(64*prop),int(64*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
             
@@ -410,7 +411,8 @@ while True:
                             elif event.button == 3:
                                 for i in selected:
                                     i.right_click(list(pygame.mouse.get_pos()))
-                    else:
+                    else:#simulating the tooltip bit for matyas' other windows
+                        
                         if event.button == 1:
                             if new_turn == False:
                                 for i in selected:
@@ -433,7 +435,12 @@ while True:
                             
                 #for the tooltip bit
                 else:
-                    
+                    for tile in tiles:
+                        for u in units:
+                            if u.selected:
+                                if u.can_throw(convert_iso(tile.coords),u.hand,tiles)!= None:
+                                    print("ehhh")
+                                    tile.throwable = True
                     if event.button == 1:
                         if new_turn == False:
                             for i in selected:
@@ -478,6 +485,12 @@ while True:
        #         i.draw_self(screen,prop,delta_x,delta_y)
         #    elif type(i)== unit.Enemy:
        #         i.draw_self(screen,tiles,prop,delta_x,delta_y)
+
+        for i in units:
+            if i.throwing:
+                #print("We ARE throwing!")
+                choosing_throwing = True
+            
         for tile in tiles:
             if tile not in tall_tiles:
                 tile.draw_self(choosing_throwing)
@@ -496,9 +509,7 @@ while True:
         for i in units:
             i.draw_self(screen,prop,delta_x,delta_y)
 
-            if i.throwing:
-                #print("We ARE throwing!")
-                choosing_throwing = True
+            
             
             i.update(tiles)
             if i.selected:
