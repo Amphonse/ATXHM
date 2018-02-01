@@ -363,7 +363,7 @@ while True:
                         if u.selected == True:
                             if u.stats_page == True:
                                 if u.st_x < list(pygame.mouse.get_pos())[0] and list(pygame.mouse.get_pos())[0] <u.st_x + 300:
-                                    if u.st_y-15 < list(pygame.mouse.get_pos())[1] and list(pygame.mouse.get_pos())[1]<u.st_y + 300:
+                                    if u.st_y-30 < list(pygame.mouse.get_pos())[1] and list(pygame.mouse.get_pos())[1]<u.st_y + 315:
                                         other_mode = True
                                     else:
                                         other_mode = False
