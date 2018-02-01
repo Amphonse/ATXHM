@@ -111,7 +111,7 @@ class Enemy(mans.mans):
         self.rect = self.image.get_rect()
         self.rect = coords
         self.speed = speed
-        self.move_points = speed
+        #self.move_points = speed
         self.action_points = int(speed/2.0)#number of actions that ca be taken in a turn. this includes attacks.
         self.coords = coords
         self.path = []
@@ -123,10 +123,11 @@ class Enemy(mans.mans):
         self.ok_to_move = False
 
         super().__init__(name,screen)
+        self.move_points = int((self.movment+50)/20)
 
                 
     def new_turn(self):
-        self.move_points = self.speed
+        self.move_points  = int((self.movment+50)/20)
 
         #Matyas's update method
         self.mupdate()
@@ -324,7 +325,7 @@ class Unit(mans.mans):
         self.rect = self.image.get_rect()
         self.rect = coords
         self.speed = speed
-        self.move_points = speed
+        #self.move_points = speed
         self.coords = coords
         self.path = []
         self.stage = 1
@@ -337,11 +338,12 @@ class Unit(mans.mans):
         super().__init__(name,screen)
         #self.man = mans.mans(name,screen)
         self.old_pos_test = [0,0]
+        self.move_points = int((self.movment+50)/20)
 
     
                 
     def new_turn(self):
-        self.move_points = self.speed
+        self.move_points = int(int((self.movment+50)/20))
         self.path = None
         self.moving = False
         self.actions = 0
