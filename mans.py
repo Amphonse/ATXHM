@@ -74,7 +74,7 @@ class mans():
         self.shielding = np.random.normal(50,16.6)
         self.dodge = np.random.normal(50,16.6)
         self.parry = np.random.normal(50,16.6)
-        self.endurance = np.random.normal(100,16.6)
+        self.endurance = np.random.normal(50,8.3)
         self.attacks = 1
         self.actions = 0
         self.tot_actions = 2
@@ -125,7 +125,10 @@ class mans():
         self.hand2_rekt = self.head_im.get_rect()
         self.mpos = (0,0)
         self.drawing = None
+        self.st_x =100
+        self.st_y = 100
         self.throwing = False
+        self.stats_page =  False
         self.menu = False
         self.chose_who = False
         self.whoo = None
@@ -160,34 +163,34 @@ class mans():
         print(self.name + " was hit in the "+location +" for "+str(dmg)+" Damage")
         self.health -= (dmg*self.limbs[location][1])*100/self.endurance
         print(self.name +" took "+str((dmg*self.limbs[location][1])*100/self.endurance)+" Damage")
-        self.wounds +=((dmg*self.limbs[location][1])*100/self.endurance)/10
-        self.wound += ((dmg*self.limbs[location][1])*100/self.endurance)/5
-        self.shock += ((dmg*self.limbs[location][1])*100/self.endurance)*self.limbs[location][4]
+        self.wounds +=((dmg*self.limbs[location][1])*100/self.endurance*2)/10
+        self.wound += ((dmg*self.limbs[location][1])*100/self.endurance*2)/5
+        self.shock += ((dmg*self.limbs[location][1])*100/self.endurance*2)*self.limbs[location][4]
         if self.health<0:
             self.health=0
         self.mupdate()
     def mupdate(self):
         #does the stuff with wounds and does checks to see if dead
         if self.state == "Normal":
-            if self.health*self.endurance/100 < self.wound:
+            if self.health*self.endurance/50 < self.wound:
                 self.state = "Dead"
                 print(self.state)
-            elif self.health*self.endurance/100 < self.shock+self.wound*2:
+            elif self.health*self.endurance/50 < self.shock+self.wound*2:
                 self.state = "Unconcious"
                 print(self.state)
             else:
                 pass
         elif self.state == "Unconcious":
-            if self.health*self.endurance/100 < self.wound:
+            if self.health*self.endurance/50 < self.wound:
                 self.state = "Dead"
                 print(self.state)
-            elif self.health*self.endurance/100 > self.shock*2+self.wound*10:
+            elif self.health*self.endurance/50 > self.shock*2+self.wound*10:
                 self.state = "Normal"
                 print(self.name+" wakes up")
             else:
                 pass
         self.wound += (self.wounds-1)
-        self.shock -= (self.endurance/20)
+        self.shock -= (self.endurance/10)
         if self.wound < 0:
             self.wound = 0
         if self.wound > 100:
@@ -283,11 +286,17 @@ class mans():
         pygame.draw.line(self.screen,(50,50,50),(int(self.prop*860+self.delta_x),int(self.prop*800+self.delta_y)),(int(self.prop*860+self.delta_x),int(self.prop*700+self.delta_y)),int(self.prop*5))
         pygame.draw.line(self.screen,(50,50,50),(int(self.prop*520+self.delta_x),int(self.prop*800+self.delta_y)),(int(self.prop*520+self.delta_x),int(self.prop*700+self.delta_y)),int(self.prop*5))
         pygame.draw.line(self.screen,(50,50,50),(int(self.prop*520+self.delta_x),int(self.prop*740+self.delta_y)),(int(self.prop*860+self.delta_x),int(self.prop*740+self.delta_y)),int(self.prop*5))
+        pygame.draw.polygon(self.screen,(50,50,50),((int(self.prop*520+self.delta_x),int(self.prop*770+self.delta_y)),
+                                                    (int(self.prop*520+self.delta_x),int(self.prop*800+self.delta_y)),
+                                                         (int(self.prop*620+self.delta_x),int(self.prop*800+self.delta_y)),
+                                                              (int(self.prop*620+self.delta_x),int(self.prop*770+self.delta_y))),int(self.prop*5))
         texts = self.font.render(self.name,False,(0,0,0))
         size  = self.font.size(self.name)
         self.screen.blit(texts,(int(self.prop*530+self.delta_x),int(self.prop*730+self.delta_y)-size[1]))
         if self.vatss:
             self.vats()
+        if self.stats_page:
+            self.stats_pg(self.st_x,self.st_y)
         self.draw_box(self.drawing,self.menu)
         self.per_tick()
 
@@ -399,7 +408,7 @@ class mans():
             self.attack(self.hand,self.whoo,aimed_location)
             self.vatss = False
             
-        if self.menu:
+        elif self.menu:
             for i in list(self.options.keys()):
                 print(i)
                 print(mpos)
@@ -417,10 +426,21 @@ class mans():
                                 #print(i.equipment[self.hand])
                 
                         #self.throw(self.hand,0,floor)
+        elif not self.stats_page:
+            if mpos[0] in range(int(self.prop*520+self.delta_x),int(self.prop*620+self.delta_x)) and mpos[1] in range(int(self.prop*770+self.delta_y),int(self.prop*800+self.delta_y)):
+                self.stats_pg(self.st_x,self.st_y)
+                self.stats_page = True
+        elif self.stats_page:
+            if mpos[0] in range(int(self.prop*(self.st_x+285)+self.delta_x),int(self.prop*(self.st_x+300)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.st_y-30)+self.delta_y),int(self.prop*(self.st_y-15)+self.delta_y)):
+                self.stats_page = False
+            
+        
+            
         self.menu =False
         return floor
     
     def per_tick(self):
+        #self.stats_pg(100,100)
         #fonts = pygame.font.SysFont("Palatino Linotype",int(self.prop*15))
         #self.draw_bar(100,434,200,15,self.endurance,150,(0,0,255),(0,0,5),fonts,(255,0,255))
         #self.draw_bar(100,434,215,15,self.strn,150,(0,0,205),(0,0,55),fonts,(255,0,255))
@@ -507,8 +527,45 @@ class mans():
             pygame.draw.line(self.screen,color1,(int(self.prop*lx+self.delta_x),int(self.prop*by+self.delta_y)),(int(self.prop*(lx+scale)+self.delta_x),int(self.prop*by+self.delta_y)),int(self.prop*hy))
         texts = fonts.render(str(int(attr)),False,text_color)
         size  = fonts.size(str(int(attr)))
-        self.screen.blit(texts,(int(self.prop*((-size[0]/2)+lx+(rx-lx)/2)+self.delta_x),int(self.prop*(by+self.delta_y)-size[1]/2)))
+        self.screen.blit(texts,(int(self.prop*((-size[0]/2)+lx+(rx-lx)/2)+self.delta_x),int(self.prop*(by)+self.delta_y-size[1]/2)))
 
+    def stats_pg(self,lx,by):
+        fonts = pygame.font.SysFont("Palatino Linotype",int(self.prop*15))
+        self.draw_bar(lx,lx+300,by,30,self.ranged,100,(16,78,139),(202,225,255),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+30,30,self.melee,100,(16,78,139),(202,225,255),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+60,30,self.magic,100,(16,78,139),(202,225,255),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+90,30,self.will,100,(178,58,238),(171,130,255),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+120,30,self.shielding,100,(178,58,238),(171,130,255),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+150,30,self.dodge,100,(178,58,238),(171,130,255),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+180,30,self.parry,100,(178,58,238),(171,130,255),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+210,30,self.strn,100,(255,127,0),(238,203,173),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+240,30,self.movment,100,(255,127,0),(238,203,173),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+270,30,self.thrown,100,(255,127,0),(238,203,173),fonts,(179,238,58))
+        self.draw_bar(lx,lx+300,by+300,30,self.thrown,100,(205,0,0),(205,92,92),fonts,(179,238,58))
+        pygame.draw.polygon(self.screen,(255,0,0),((int(self.prop*(lx+285)+self.delta_x),int(self.prop*(by-30)+self.delta_y)),
+                                                      (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by-30)+self.delta_y)),
+                                                        (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by-15)+self.delta_y)),
+                                                         (int(self.prop*(lx+285)+self.delta_x),int(self.prop*(by-15)+self.delta_y))),0)
+        pygame.draw.polygon(self.screen,(50,50,50),((int(self.prop*(lx)+self.delta_x),int(self.prop*(by-30)+self.delta_y)),
+                                                      (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by-30)+self.delta_y)),
+                                                        (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by-15)+self.delta_y)),
+                                                         (int(self.prop*(lx)+self.delta_x),int(self.prop*(by-15)+self.delta_y))),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+285)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+285)+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+255)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+255)+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+225)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+225)+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+195)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+195)+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+165)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+165)+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+135)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+135)+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+105)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+105)+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+75)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+75)+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+45)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+45)+self.delta_y)),int(self.prop*5))
+        pygame.draw.line(self.screen,(50,50,50),(int(self.prop*(lx)+self.delta_x),int(self.prop*(by+15)+self.delta_y)),(int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+15)+self.delta_y)),int(self.prop*5))
+        pygame.draw.polygon(self.screen,(50,50,50),((int(self.prop*(lx)+self.delta_x),int(self.prop*(by-15)+self.delta_y)),
+                                                      (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by-15)+self.delta_y)),
+                                                        (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by+315)+self.delta_y)),
+                                                         (int(self.prop*(lx)+self.delta_x),int(self.prop*(by+315)+self.delta_y))),int(self.prop*5))
+       
+        
             
         
         
