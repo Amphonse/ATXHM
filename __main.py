@@ -344,6 +344,8 @@ while True:
                         i.visited = True
 
             if event.type == pygame.MOUSEBUTTONUP:
+                for tile in tiles:
+                    tile.throwable = False
                 choosing_attack = False
                 choosing_menu = False
                 choosing_loc = False
