@@ -492,7 +492,7 @@ class Unit(mans.mans):
         else:
             return None
 
-    def can_throw(self,target_coords,hand,tiles):
+    def can_throw(self,target_coords,tiles,hand = "Left Hand"):
         can_throw = True
         iso_target = detect_clicked(target_coords)
         x = iso_target[0]-self.coords[0]

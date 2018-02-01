@@ -401,7 +401,7 @@ while True:
                             for tile in tiles:
                                 for u in units:
                                     if u.selected:
-                                        if u.can_throw(convert_iso(tile.coords),u.hand,tiles)!= None:
+                                        if u.can_throw(convert_iso(tile.coords),tiles)!= None:
                                             print("ehhh")
                                             tile.throwable = True
                             if event.button == 1:
@@ -438,7 +438,7 @@ while True:
                     for tile in tiles:
                         for u in units:
                             if u.selected:
-                                if u.can_throw(convert_iso(tile.coords),u.hand,tiles)!= None:
+                                if u.can_throw(convert_iso(tile.coords),tiles)!= None:
                                     print("ehhh")
                                     tile.throwable = True
                     if event.button == 1:
