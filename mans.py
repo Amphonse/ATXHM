@@ -262,7 +262,7 @@ class mans():
         else:
             print(self.name+ " has no free hands")
         return floor
-    def throw(self,withs,where,floor):
+    def throw(self,where,floor,withs="Left Hand"):
         if where != None:
             #just sets what your thrwoing to none so it falls into the void
             self.equipment[withs][0][0].coords = where
@@ -368,7 +368,7 @@ class mans():
         print(self.st_x,mpos[0],self.st_y,mpos[1])
         if self.chose_who:
             if self.throwing:
-                floor = self.throw(self.hand,self.can_throw(mpos,self.hand,tiles),floor)
+                floor = self.throw(self.can_throw(mpos,self.hand,tiles),floor,self.hand)
                 if self.can_throw(mpos,self.hand,tiles) != None:
                     self.throwing=False
                     self.chose_who = False
