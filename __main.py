@@ -367,8 +367,16 @@ while True:
                             choosing_loc = True
                         if u.selected == True:
                             if u.stats_page == True:
-                                if u.st_x < list(pygame.mouse.get_pos())[0] and list(pygame.mouse.get_pos())[0] <u.st_x + 300:
-                                    if u.st_y-30 < list(pygame.mouse.get_pos())[1] and list(pygame.mouse.get_pos())[1]<u.st_y + 315:
+                                if u.st_x < pos[0] and pos[0] <u.st_x + 300:
+                                    if u.st_y-30 < pos[1] and pos[1]< u.st_y +315:
+                                        other_mode = True
+                                    else:
+                                        other_mode = False
+                                else:
+                                    other_mode = False
+                            if u.inv_pg == True:
+                                if u.in_x+10 < pos[0] and pos[0] <u.in_x + 290:
+                                    if u.in_y-15 < pos[1] and pos[1]< u.in_y +300:
                                         other_mode = True
                                     else:
                                         other_mode = False
@@ -385,6 +393,8 @@ while True:
                                 if new_turn == False:
                                     for i in tiles:
                                         if i.coords == iso_clicked:
+#
+                                            print("iso_clicked",iso_clicked)
                                             i.print_self()
                                     for i in units:
                                         if is_moving == False:
@@ -402,12 +412,17 @@ while True:
                                                         i.move_to(iso_clicked,pf_info[0],pf_info[1],units,enemies,tiles)
                         else:
                             #if choosing_throwing:
-                            for tile in tiles:
-                                for u in units:
-                                    if u.selected:
-                                        if u.can_throw(convert_iso(tile.coords),tiles)!= None:
-                                            #print("ehhh")
-                                            tile.throwable = True
+                            for u in units:
+                                if u.selected:
+                                    for tile in tiles:
+#
+                                        #non_screen_coords = detect_clicked(tile.coords) 
+                                        a = u.can_throw(tile.coords,tiles)
+                                        if a!= None:
+                                            print(tile.coords[0],a[0],tile.coords[1],a[1])
+                                            if tile.coords[0] == a[0] and tile.coords[1] == a[1]:
+                                                tile.throwable = True
+
                             if event.button == 1:
                                 for i in selected:
                                     i.left_click(enemies,tiles,floor_items)
@@ -439,12 +454,16 @@ while True:
                             
                 #for the tooltip bit
                 else:
-                    for tile in tiles:
-                        for u in units:
-                            if u.selected:
-                                if u.can_throw(convert_iso(tile.coords),tiles)!= None:
-                                    #print("ehhh")
-                                    tile.throwable = True
+                    for u in units:
+                        if u.selected:
+                            for tile in tiles:
+                                
+                                a = u.can_throw(tile.coords,tiles)
+                                if a!= None:
+                                    print(tile.coords[0],a[0],tile.coords[1],a[1])
+                                    if tile.coords[0] == a[0] and tile.coords[1] == a[1]:
+                                        tile.throwable = True
+
                     if event.button == 1:
                         if new_turn == False:
                             for i in selected:

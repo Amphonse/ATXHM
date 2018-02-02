@@ -10,6 +10,15 @@ def convert_iso(r,mve_vect):
 
     return (int(x),int(y))
 
+def convert_iso_map(r):
+    #converts grid coordinates to a blit friendly set of iso coordinates.
+    y = r[1]*32
+    x = r[0]*32
+    if r[0]%2 != 0:
+        y += 16
+
+    return (int(x),int(y))
+
 def convert_grid(r):
     #converts iso coordinates to a click detector set of grid coordinates.
     y = int(r[1]/32)
@@ -496,15 +505,20 @@ class Unit(mans.mans):
 
     def can_throw(self,target_coords,tiles,hand = "Left Hand"):
         can_throw = True
+        #print(target_coords)
         iso_target = detect_clicked(target_coords)
+        print(target_coords,iso_target)
+        #target_coords = convert_iso_map(iso_target)
         x = iso_target[0]-self.coords[0]
+        #print(iso_target[0],"-",self.coords[0])
         y = iso_target[1]-self.coords[1]
+        #print(math.sqrt(x**2+y**2))
         if math.sqrt(x**2+y**2) <= 5*self.strn/100:
             #print(self.coords)
             self_grid = convert_iso(self.coords,[0,0])
             #print(self_grid)
-            vect_x = target_coords[0]-self_grid[0]
-            vect_y = target_coords[1]-self_grid[1]
+            vect_x = iso_target[0]-self_grid[0]
+            vect_y = iso_target[1]-self_grid[1]
             for i in range(50):
                 #print(i,"kjlllllllllllllllllllllllllllllllllllllll")
                 
