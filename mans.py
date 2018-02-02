@@ -133,8 +133,10 @@ class mans():
         self.stats_page =  False
         self.menu = False
         self.screen_move = False
+        self.iscreen_move = False
         self.chose_who = False
         self.whoo = None
+        self.moving_item = False
         self.inv_pg = False
         self.prev_mpos = (0,0)
         self.resize()
@@ -243,19 +245,6 @@ class mans():
         if self.state != "Normal":
             self.margind =0
                 
-    def invman(self,what,froms,to):
-        #basic inventory management
-        if self.equipment[to][0][0] == None:
-            self.equipment[to][0] = [self.equipment[froms][what][0]]
-        elif len(self.equipment[to][0]) < self.equipment[to][1]:
-            self.equipment[to].append(self.equipment[froms][what])
-            if len(self.equipment[froms][0]) == 1:
-                self.equipment[froms][0] = [None]
-            else:
-                self.equipment[froms].remove(self.equipment[froms][what])
-
-        else:
-            print(to + " full")
     def pick_up(self,what,floor):
         floor.remove(what)
         #just places something from floor to hand
@@ -341,6 +330,7 @@ class mans():
     def right_click(self,mpos=None):
         self.throwing = False
         self.chose_who = False
+        self.moving_item = False
         #does all the calculation realting to right clicking (oly what weps will do so far)
         self.menu=False
         if mpos != None:
@@ -357,15 +347,18 @@ class mans():
         
         if in_box and not self.vatss and not self.chose_who and self.state == "Normal":
             self.rhold = True
-            if self.equipment[self.hand][0] == [None]:
+            if isinstance(self.equipment[self.hand][0][0],weepons):
+                if self.equipment[self.hand][0][0].atktype == "Melee":
+                    self.draw_box([["Melee Attack","Attack"],["Throw","Throw"]])
+                    self.drawing = [["Throw","Throw"],["Melee Attack","Attack"]]
+                elif self.equipment[self.hand][0][0].atktype == "Ranged":
+                    self.draw_box([["Ranged Attack","Attack"],["Throw","Throw"]])
+                    self.drawing = [["Throw","Throw"],["Ranged Attack","Attack"]]
+            elif self.equipment[self.hand][0] == [None]:
                 self.draw_box([["Punch","Attack"],["Pick up","Pick"]])
                 self.drawing = [["Punch","Attack"],["Pick up","Pick"]]
-            elif self.equipment[self.hand][0][0].atktype == "Melee":
-                self.draw_box([["Melee Attack","Attack"],["Throw","Throw"]])
-                self.drawing = [["Throw","Throw"],["Melee Attack","Attack"]]
-            elif self.equipment[self.hand][0][0].atktype == "Ranged":
-                self.draw_box([["Ranged Attack","Attack"],["Throw","Throw"]])
-                self.drawing = [["Throw","Throw"],["Ranged Attack","Attack"]]
+            else:
+                self.drawing = [["Throw","Throw"]]
             self.menu = True
         else:
             self.drawing = None
@@ -457,13 +450,30 @@ class mans():
                 self.inv_pg = True
         elif self.inv_pg:
             if mpos[0] in range(int(self.prop*(self.in_x+285)+self.delta_x),int(self.prop*(self.in_x+300)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y-15)+self.delta_y),int(self.prop*(self.in_y)+self.delta_y)):
-                self.stats_page = False
+                self.inv_pg = False
             if mpos[0] in range(int(self.prop*(self.in_x)+self.delta_x),int(self.prop*(self.in_x+285)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y-15)+self.delta_y),int(self.prop*(self.in_y)+self.delta_y)):
-                if not self.screen_move:
-                    self.screen_move=True
-                elif self.screen_move:
-                    self.screen_move=False
+                if not self.iscreen_move:
+                    self.iscreen_move=True
+                elif self.iscreen_move:
+                    self.iscreen_move=False
                     print("HI")
+            item = self.get_box(mpos)
+            if item != None:
+                if not self.moving_item:
+                    if self.equipment[item[0]][0][item[1]] != None:
+                        self.moving_item = True
+                        self.item_to_move = item
+                if self.moving_item:
+                    print(item) 
+                    if self.equipment[item[0]][0][item[1]] == None:
+                        self.moving_item = False
+                        self.equipment[item[0]][0][item[1]] = self.equipment[self.item_to_move[0]][0][self.item_to_move[1]]
+                        self.equipment[self.item_to_move[0]][0][self.item_to_move[1]] = None
+            else:
+                self.moving_item = False
+                
+               
+            
                 
             
         
@@ -501,15 +511,14 @@ class mans():
         texts = self.font.render(self.state,False,(0,0,0))
         size  = self.font.size(self.state)
         self.screen.blit(texts,(int(self.prop*850+self.delta_x)-size[0],int(self.prop*730+self.delta_y)-size[1]))
+        chy = mpos[1]-self.prev_mpos[1]
+        chx = mpos[0]-self.prev_mpos[0]
         if self.screen_move:
-            chy = mpos[1]-self.prev_mpos[1]
-            chx = mpos[0]-self.prev_mpos[0]
-            if self.stats_page:
-                self.st_x += chx
-                self.st_y += chy
-            if self.inv_pg:
-                self.in_x += chx
-                self.in_y += chy
+            self.st_x += chx
+            self.st_y += chy
+        if self.iscreen_move:
+            self.in_x += chx
+            self.in_y += chy
         self.prev_mpos = mpos
     def resize(self):
         #deals with resizeing screen
@@ -738,10 +747,62 @@ class mans():
                                                         (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by)+self.delta_y)),
                                                          (int(self.prop*(lx)+self.delta_x),int(self.prop*(by)+self.delta_y))),int(self.prop*5))  
         
+        if self.equipment["Left Hand"][0][0] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+80)+self.delta_x),int(self.prop*(self.in_y+130)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Right Hand"][0][0] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+220)+self.delta_x),int(self.prop*(self.in_y+130)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Belt"][0][0] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+110)+self.delta_x),int(self.prop*(self.in_y+180)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Belt"][0][1] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+150)+self.delta_x),int(self.prop*(self.in_y+180)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Belt"][0][2] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+180)+self.delta_x),int(self.prop*(self.in_y+180)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Back"][0][0] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+130)+self.delta_x),int(self.prop*(self.in_y+50)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Back"][0][1] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+170)+self.delta_x),int(self.prop*(self.in_y+50)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Back"][0][2] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+130)+self.delta_x),int(self.prop*(self.in_y+90)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Back"][0][3] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+170)+self.delta_x),int(self.prop*(self.in_y+90)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Back"][0][4] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+130)+self.delta_x),int(self.prop*(self.in_y+130)+self.delta_y)), int(self.prop*(20)), 0)
+        if self.equipment["Back"][0][5] != None:
+            pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+170)+self.delta_x),int(self.prop*(self.in_y+130)+self.delta_y)), int(self.prop*(20)), 0)
+        
         
 
         
         
+    def get_box(self,mpos):
+            if mpos[0] in range(int(self.prop*(self.in_x+110)+self.delta_x),int(self.prop*(self.in_x+150)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+30)+self.delta_y),int(self.prop*(self.in_y+70)+self.delta_y)):
+                return ["Back",0]
+            elif mpos[0] in range(int(self.prop*(self.in_x+150)+self.delta_x),int(self.prop*(self.in_x+190)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+30)+self.delta_y),int(self.prop*(self.in_y+70)+self.delta_y)):
+                return ["Back",1]
+            elif mpos[0] in range(int(self.prop*(self.in_x+110)+self.delta_x),int(self.prop*(self.in_x+150)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+70)+self.delta_y),int(self.prop*(self.in_y+110)+self.delta_y)):
+                return ["Back",2]
+            elif mpos[0] in range(int(self.prop*(self.in_x+150)+self.delta_x),int(self.prop*(self.in_x+190)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+70)+self.delta_y),int(self.prop*(self.in_y+110)+self.delta_y)):
+                return ["Back",3]
+            elif mpos[0] in range(int(self.prop*(self.in_x+110)+self.delta_x),int(self.prop*(self.in_x+150)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+110)+self.delta_y),int(self.prop*(self.in_y+150)+self.delta_y)):
+                return ["Back",4]
+            elif mpos[0] in range(int(self.prop*(self.in_x+150)+self.delta_x),int(self.prop*(self.in_x+190)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+110)+self.delta_y),int(self.prop*(self.in_y+150)+self.delta_y)):
+                return ["Back",5]
+            
+            elif mpos[0] in range(int(self.prop*(self.in_x+90)+self.delta_x),int(self.prop*(self.in_x+130)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+160)+self.delta_y),int(self.prop*(self.in_y+200)+self.delta_y)):
+                return ["Belt",0]
+            elif mpos[0] in range(int(self.prop*(self.in_x+130)+self.delta_x),int(self.prop*(self.in_x+170)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+160)+self.delta_y),int(self.prop*(self.in_y+200)+self.delta_y)):
+                return ["Belt",1]
+            elif mpos[0] in range(int(self.prop*(self.in_x+170)+self.delta_x),int(self.prop*(self.in_x+210)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+160)+self.delta_y),int(self.prop*(self.in_y+200)+self.delta_y)):
+                return ["Belt",2]
+            
+            elif mpos[0] in range(int(self.prop*(self.in_x+60)+self.delta_x),int(self.prop*(self.in_x+100)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+110)+self.delta_y),int(self.prop*(self.in_y+150)+self.delta_y)):
+                return ["Left Hand",0]
+            elif mpos[0] in range(int(self.prop*(self.in_x+200)+self.delta_x),int(self.prop*(self.in_x+240)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y+110)+self.delta_y),int(self.prop*(self.in_y+150)+self.delta_y)):
+                return ["Right Hand",0]   
+            
+            
+     
+
             
             
  
