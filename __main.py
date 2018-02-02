@@ -417,7 +417,7 @@ while True:
                                     for tile in tiles:
 #
                                         #non_screen_coords = detect_clicked(tile.coords) 
-                                        a = u.can_throw(tile.coords,tiles)
+                                        a = u.can_throw(convert_iso(tile.coords),tiles)
                                         if a!= None:
                                             print(tile.coords[0],a[0],tile.coords[1],a[1])
                                             if tile.coords[0] == a[0] and tile.coords[1] == a[1]:
@@ -458,7 +458,7 @@ while True:
                         if u.selected:
                             for tile in tiles:
                                 
-                                a = u.can_throw(tile.coords,tiles)
+                                a = u.can_throw(convert_iso(tile.coords),tiles)
                                 if a!= None:
                                     print(tile.coords[0],a[0],tile.coords[1],a[1])
                                     if tile.coords[0] == a[0] and tile.coords[1] == a[1]:

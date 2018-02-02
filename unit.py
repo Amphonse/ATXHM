@@ -507,7 +507,7 @@ class Unit(mans.mans):
         can_throw = True
         #print(target_coords)
         iso_target = detect_clicked(target_coords)
-        print(target_coords,iso_target)
+        #print(target_coords,iso_target)
         #target_coords = convert_iso_map(iso_target)
         x = iso_target[0]-self.coords[0]
         #print(iso_target[0],"-",self.coords[0])
@@ -515,10 +515,10 @@ class Unit(mans.mans):
         #print(math.sqrt(x**2+y**2))
         if math.sqrt(x**2+y**2) <= 5*self.strn/100:
             #print(self.coords)
-            self_grid = convert_iso(self.coords,[0,0])
-            #print(self_grid)
-            vect_x = iso_target[0]-self_grid[0]
-            vect_y = iso_target[1]-self_grid[1]
+            self_grid = convert_iso_map(self.coords)
+            print(target_coords[0],"-",self_grid)
+            vect_x = target_coords[0]-self_grid[0]
+            vect_y = target_coords[1]-self_grid[1]
             for i in range(50):
                 #print(i,"kjlllllllllllllllllllllllllllllllllllllll")
                 
