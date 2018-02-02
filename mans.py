@@ -151,11 +151,15 @@ class mans():
         if dtype == "Crushing":
             if self.limbs[location][2].maxhealth>0:
                 dmg -= self.limbs[location][2].cmod*self.limbs[location][2].health/self.limbs[location][2].maxhealth
-            self.limbs[location][2].health -= odmg
+                self.limbs[location][2].health -= odmg
+            else:
+                odmg = 0
         else:
             if self.limbs[location][2].maxhealth>0:
                 dmg -= self.limbs[location][2].cmod*self.limbs[location][2].health/self.limbs[location][2].maxhealth
-            self.limbs[location][2].health -= odmg
+                self.limbs[location][2].health -= odmg
+            else:
+                odmg = 0
         if dmg < 0:
             dmg = 0
         if dtype == "Impaling":
@@ -211,6 +215,7 @@ class mans():
             if wep == None:
                 wep = weepons(0,0,"Fisto","Crushing","Melee",5)
             roll = random.random()*100
+            roll += self.shock/10
             if wep.atktype == "Melee":
                 self.margina = self.melee-roll
             elif wep.atktype == "Ranged":
@@ -226,6 +231,7 @@ class mans():
         #when attacked this calc defence roll
         #do only if normal
         roll = random.random()*100
+        roll += self.shock/10
         if self.equipment["Left Hand"] == None and self.equipment["Right Hand"] == None:
             self.margind = self.dodge-roll
         elif self.equipment["Left Hand"] is shield or self.equipment["Right Hand"] is shield:
@@ -769,9 +775,8 @@ class mans():
             pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+130)+self.delta_x),int(self.prop*(self.in_y+130)+self.delta_y)), int(self.prop*(20)), 0)
         if self.equipment["Back"][0][5] != None:
             pygame.draw.circle(self.screen, (255,0,0), (int(self.prop*(self.in_x+170)+self.delta_x),int(self.prop*(self.in_y+130)+self.delta_y)), int(self.prop*(20)), 0)
+            
         
-        
-
         
         
     def get_box(self,mpos):
