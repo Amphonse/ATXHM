@@ -92,7 +92,7 @@ class mans():
                       ,'Groin':[100,0.2,armor(0,0,"Godpiece",100,'Groin',100,0),"Normal",60]
                       }
         self.health = 100
-        self.equipment = {"Left Hand":[[None],1],"Right Hand":[[weepons(0,0,"The pow bow wow","Impaling","Ranged",20,ranges=10000)],1],"Back":[[consumables(0,0,"Arrers",10,"Ammo")],6],"Belt":[[weepons(0,0,"Dagger","Cutting","Melee",100)],3]}
+        self.equipment = {"Left Hand":[[None],1],"Right Hand":[[weepons(0,0,"The pow bow wow","Impaling","Ranged",20,ranges=10000)],1],"Back":[[consumables(0,0,"Arrers",10,"Ammo"),None,None,None,None,None],6],"Belt":[[weepons(0,0,"Dagger","Cutting","Melee",100),None,None],3]}
         self.head_im = pygame.image.load("Head.png").convert()
         self.head_im.set_colorkey((255,255,255))
         self.head_rekt = self.head_im.get_rect()
@@ -127,12 +127,15 @@ class mans():
         self.drawing = None
         self.st_x =100
         self.st_y = 100
+        self.in_x =100
+        self.in_y = 100
         self.throwing = False
         self.stats_page =  False
         self.menu = False
         self.screen_move = False
         self.chose_who = False
         self.whoo = None
+        self.inv_pg = False
         self.prev_mpos = (0,0)
         self.resize()
     def get_hit(self,location,dmg,dtype):
@@ -292,6 +295,10 @@ class mans():
                                                     (int(self.prop*520+self.delta_x),int(self.prop*800+self.delta_y)),
                                                          (int(self.prop*620+self.delta_x),int(self.prop*800+self.delta_y)),
                                                               (int(self.prop*620+self.delta_x),int(self.prop*770+self.delta_y))),int(self.prop*5))
+        pygame.draw.polygon(self.screen,(50,50,50),((int(self.prop*620+self.delta_x),int(self.prop*770+self.delta_y)),
+                                                    (int(self.prop*620+self.delta_x),int(self.prop*800+self.delta_y)),
+                                                         (int(self.prop*720+self.delta_x),int(self.prop*800+self.delta_y)),
+                                                              (int(self.prop*720+self.delta_x),int(self.prop*770+self.delta_y))),int(self.prop*5))
         texts = self.font.render(self.name,False,(0,0,0))
         size  = self.font.size(self.name)
         self.screen.blit(texts,(int(self.prop*530+self.delta_x),int(self.prop*730+self.delta_y)-size[1]))
@@ -299,6 +306,8 @@ class mans():
             self.vats()
         if self.stats_page:
             self.stats_pg(self.st_x,self.st_y)
+        if self.inv_pg:
+            self.draw_inventory_pg(self.in_x,self.in_y)
         self.draw_box(self.drawing,self.menu)
         self.per_tick()
 
@@ -429,7 +438,7 @@ class mans():
                                 #print(i.equipment[self.hand])
                 
                         #self.throw(self.hand,0,floor)
-        elif not self.stats_page:
+        if not self.stats_page:
             if mpos[0] in range(int(self.prop*520+self.delta_x),int(self.prop*620+self.delta_x)) and mpos[1] in range(int(self.prop*770+self.delta_y),int(self.prop*800+self.delta_y)):
                 self.stats_pg(self.st_x,self.st_y)
                 self.stats_page = True
@@ -441,7 +450,20 @@ class mans():
                     self.screen_move=True
                 elif self.screen_move:
                     self.screen_move=False
-                
+                    
+        if not self.inv_pg:
+            if mpos[0] in range(int(self.prop*620+self.delta_x),int(self.prop*720+self.delta_x)) and mpos[1] in range(int(self.prop*770+self.delta_y),int(self.prop*800+self.delta_y)):
+                self.draw_inventory_pg(self.in_x,self.in_y)
+                self.inv_pg = True
+        elif self.inv_pg:
+            if mpos[0] in range(int(self.prop*(self.in_x+285)+self.delta_x),int(self.prop*(self.in_x+300)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y-15)+self.delta_y),int(self.prop*(self.in_y)+self.delta_y)):
+                self.stats_page = False
+            if mpos[0] in range(int(self.prop*(self.in_x)+self.delta_x),int(self.prop*(self.in_x+285)+self.delta_x)) and mpos[1] in range(int(self.prop*(self.in_y-15)+self.delta_y),int(self.prop*(self.in_y)+self.delta_y)):
+                if not self.screen_move:
+                    self.screen_move=True
+                elif self.screen_move:
+                    self.screen_move=False
+                    print("HI")
                 
             
         
@@ -453,7 +475,7 @@ class mans():
         mpos = list(pygame.mouse.get_pos())
         mpos[0] = int((mpos[0]-self.delta_x)/self.prop)
         mpos[1] = int((mpos[1]-self.delta_y)/self.prop)
-        self.inventory_pg(100, 100)
+        #self.draw_inventory_pg(100, 100)
         #fonts = pygame.font.SysFont("Palatino Linotype",int(self.prop*15))
         #self.draw_bar(100,434,200,15,self.endurance,150,(0,0,255),(0,0,5),fonts,(255,0,255))
         #self.draw_bar(100,434,215,15,self.strn,150,(0,0,205),(0,0,55),fonts,(255,0,255))
@@ -482,8 +504,12 @@ class mans():
         if self.screen_move:
             chy = mpos[1]-self.prev_mpos[1]
             chx = mpos[0]-self.prev_mpos[0]
-            self.st_x += chx
-            self.st_y += chy
+            if self.stats_page:
+                self.st_x += chx
+                self.st_y += chy
+            if self.inv_pg:
+                self.in_x += chx
+                self.in_y += chy
         self.prev_mpos = mpos
     def resize(self):
         #deals with resizeing screen
@@ -585,7 +611,7 @@ class mans():
                                                          (int(self.prop*(lx)+self.delta_x),int(self.prop*(by+315)+self.delta_y))),int(self.prop*5))
        
         
-    def inventory_pg(self,lx,by):
+    def draw_inventory_pg(self,lx,by):
         pygame.draw.polygon(self.screen, (50,50,50), ((int(self.prop*(lx+10)+self.delta_x),int(self.prop*(by)+self.delta_y)),
                                                        (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by)+self.delta_y)),
                                                         (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
@@ -701,7 +727,16 @@ class mans():
                                                        (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
                                                         (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
                                                         (int(self.prop*(lx+250)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(5)))
-          
+        
+        
+        pygame.draw.polygon(self.screen,(255,0,0),((int(self.prop*(lx+285)+self.delta_x),int(self.prop*(by-15)+self.delta_y)),
+                                                      (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by-15)+self.delta_y)),
+                                                        (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by)+self.delta_y)),
+                                                         (int(self.prop*(lx+285)+self.delta_x),int(self.prop*(by)+self.delta_y))),0)
+        pygame.draw.polygon(self.screen,(50,50,50),((int(self.prop*(lx)+self.delta_x),int(self.prop*(by-15)+self.delta_y)),
+                                                      (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by-15)+self.delta_y)),
+                                                        (int(self.prop*(lx+300)+self.delta_x),int(self.prop*(by)+self.delta_y)),
+                                                         (int(self.prop*(lx)+self.delta_x),int(self.prop*(by)+self.delta_y))),int(self.prop*5))  
         
         
 
