@@ -130,6 +130,7 @@ class Enemy(mans.mans):
         self.etype = etype#0 is melee,1 is ranged
         self.moving = False
         self.ok_to_move = False
+        
 
         super().__init__(name,screen)
         self.move_points = int((self.movment+50)/20)
@@ -194,13 +195,13 @@ class Enemy(mans.mans):
                     
                     
     def draw_self(self,screen,tiles,prop,delta_x,delta_y):
-        for tile in tiles:
-            if self.coords == tile.coords:
-                if tile.visited == False:
-                    pass
-                else:
-                    blit_coords = convert_iso(self.coords,self.move_vector)
-                    screen.blit(pygame.transform.scale(self.image,(int(64*prop),int(64*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
+        #for tile in tiles:
+        #    if self.coords == tile.coords:
+        #        if tile.visited == False:
+        #            pass
+        #        else:
+        blit_coords = convert_iso(self.coords,self.move_vector)
+        screen.blit(pygame.transform.scale(self.image,(int(64*prop),int(64*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
         
         
     def update(self):
@@ -376,12 +377,10 @@ class Unit(mans.mans):
         except:
             pass
         if self.path != None:
-            for i in tiles:
-                if i.is_Passable == False:
-                    if tuple(i.coords) == tuple(coords):
-                        self.path = None
-                        self.ok_to_move = False
-                        self.moving = False
+            if tiles[tuple(coords)].is_Passable == False:
+                self.path = None
+                self.ok_to_move = False
+                self.moving = False
                             
         if self.path == None:
             self.path = None
@@ -393,13 +392,13 @@ class Unit(mans.mans):
                 if len(self.path)>self.move_points:
                     self.ok_to_move = True
                     self.path.reverse()
-                    for i in units:
+                    for i in units.values():
                         if i.coords != list(self.path[self.move_points]):
                             #print("Loool",i.coords,list(self.path[self.move_points]))
                             pass
                         else:
                             self.ok_to_move = False
-                    for i in enemies:
+                    for i in enemies.values():
                         if i.coords != list(self.path[self.move_points]):
                             #print("Loool",i.coords,list(self.path[self.move_points]))
                             pass
@@ -411,14 +410,15 @@ class Unit(mans.mans):
                 else:
                     #print(self.path)
                     self.ok_to_move = True
-                    for i in units:
+                    
+                    for i in units.values():
                         if i.coords != list(self.path[0]):
                             #print("Loool",i.coords,list(self.path[0]))
                             pass
                             
                         else:
                             self.ok_to_move = False
-                    for i in enemies:
+                    for i in enemies.values():
                         if i.coords != list(self.path[0]):
                             #print("Loool",i.coords,list(self.path[0]))
                             pass
@@ -551,14 +551,24 @@ class Unit(mans.mans):
     def discover_tile(self,tiles):
         for n in path_iso_copy.neighbours(self.coords):
             for k in path_iso_copy.neighbours(n):
-                for i in tiles:
-                    if i.visited == False:
-                        if k == tuple(i.coords):
-                            i.visited = True
-                        if n == tuple(i.coords):
-                            i.visited = True
-                        elif self.coords == i.coords:
-                            i.visited = True
+                try:
+                    if tiles[n].visited == False:
+                        tiles[k].visited = True
+                    if tiles[k].visited == False:
+                        tiles[k].visited = True
+                    if tiles[tuple(self.coords)].visited == False:
+                        tiles[tuple(self.coords)].visited = True
+                except KeyError:
+                    pass
+                    
+                #for i in tiles:
+                #    if i.visited == False:
+                #        if k == tuple(i.coords):
+                #            i.visited = True
+                #        if n == tuple(i.coords):
+                #            i.visited = True
+                #        elif self.coords == i.coords:
+                #            i.visited = True
     def update(self,tiles):
         
 

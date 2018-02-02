@@ -343,11 +343,11 @@ while True:
                 #                            if tuple(STEPHEN.coords) in path_iso_copy.neighbours(i.coords):
                 #                                i.attack("Left Hand",STEPHEN.man)
                 if event.key == pygame.K_r:
-                    for i in tiles:
+                    for i in tiles.values():
                         i.visited = True
 
             if event.type == pygame.MOUSEBUTTONUP:
-                for tile in tiles:
+                for tile in tiles.values():
                     tile.throwable = False
                 choosing_attack = False
                 choosing_menu = False
@@ -360,7 +360,7 @@ while True:
                 pos[1] = int((pos[1]-delta_y)/prop)
                 if pos[1] < ((800*prop)*7/8)-delta_y:
                 #print("llleeeellelee")
-                    for u in units:
+                    for u in selected:
                         if u.chose_who:
                             choosing_attack = True
                         elif u.menu:
@@ -393,8 +393,8 @@ while True:
                             iso_clicked = detect_clicked(pos)
                             if event.button == 1:
                                 if new_turn == False:
-                                    tiles[iso_clicked].print_self()
-                                    units[iso_clicked].selected = True
+                                    tiles[tuple(iso_clicked)].print_self()
+                                    units[tuple(iso_clicked)].selected = True
                                     #for i in units:
                                     #    if is_moving == False:
                                     #        i.det_selected(pos)
@@ -487,6 +487,7 @@ while True:
 
 
         for i in units.values():
+            
             if i.throwing:
                 #print("We ARE throwing!")
                 choosing_throwing = True
