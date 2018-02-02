@@ -370,13 +370,12 @@ while True:
                                     if u.stats_page == True:
                                         other_mode = True
                             
-                                elif u.in_x+10 < pos[0] and pos[0] <u.in_x + 290 and u.in_y-15 < pos[1] and pos[1]< u.in_y +300:
+                                if u.in_x+10 < pos[0] and pos[0] <u.in_x + 290 and u.in_y-15 < pos[1] and pos[1]< u.in_y +300:
                                 
                                     if u.inv_pg == True:
                                         other_mode = True
 
-                                else:
-                                    other_mode = False
+
                         #if u.throwing:
                         #    print("We ARE throwing!")
                         #    choosing_throwing = True
