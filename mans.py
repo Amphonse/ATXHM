@@ -92,7 +92,7 @@ class mans():
                       ,'Groin':[100,0.2,armor(0,0,"Godpiece",100,'Groin',100,0),"Normal",60]
                       }
         self.health = 100
-        self.equipment = {"Left Hand":[[None],1],"Right Hand":[[weepons(0,0,"The pow bow wow","Impaling","Ranged",20,ranges=10000)],1],"Back":[[consumables(0,0,"Arrers",10,"Ammo")],5],"Belt":[[weepons(0,0,"Dagger","Cutting","Melee",100)],2]}
+        self.equipment = {"Left Hand":[[None],1],"Right Hand":[[weepons(0,0,"The pow bow wow","Impaling","Ranged",20,ranges=10000)],1],"Back":[[consumables(0,0,"Arrers",10,"Ammo")],6],"Belt":[[weepons(0,0,"Dagger","Cutting","Melee",100)],3]}
         self.head_im = pygame.image.load("Head.png").convert()
         self.head_im.set_colorkey((255,255,255))
         self.head_rekt = self.head_im.get_rect()
@@ -451,7 +451,9 @@ class mans():
     
     def per_tick(self):
         mpos = pygame.mouse.get_pos()
-        #self.stats_pg(100,100)
+        mpos[0] = int((mpos[0]-self.delta_x)/self.prop)
+        mpos[1] = int((mpos[1]-self.delta_y)/self.prop)
+        self.inventory_pg(100, 100)
         #fonts = pygame.font.SysFont("Palatino Linotype",int(self.prop*15))
         #self.draw_bar(100,434,200,15,self.endurance,150,(0,0,255),(0,0,5),fonts,(255,0,255))
         #self.draw_bar(100,434,215,15,self.strn,150,(0,0,205),(0,0,55),fonts,(255,0,255))
@@ -583,7 +585,123 @@ class mans():
                                                          (int(self.prop*(lx)+self.delta_x),int(self.prop*(by+315)+self.delta_y))),int(self.prop*5))
        
         
-            
+    def inventory_pg(self,lx,by):
+        pygame.draw.polygon(self.screen, (50,50,50), ((int(self.prop*(lx+10)+self.delta_x),int(self.prop*(by)+self.delta_y)),
+                                                       (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by)+self.delta_y)),
+                                                        (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
+                                                        (int(self.prop*(lx+10)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(0)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+10)+self.delta_x),int(self.prop*(by)+self.delta_y)),
+                                                       (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by)+self.delta_y)),
+                                                        (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
+                                                        (int(self.prop*(lx+10)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(5)))
+        
+        
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+110)+self.delta_x),int(self.prop*(by+30)+self.delta_y)),
+                                                       (int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+30)+self.delta_y)),
+                                                        (int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+70)+self.delta_y)),
+                                                        (int(self.prop*(lx+110)+self.delta_x),int(self.prop*(by+70)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+30)+self.delta_y)),
+                                                       (int(self.prop*(lx+190)+self.delta_x),int(self.prop*(by+30)+self.delta_y)),
+                                                        (int(self.prop*(lx+190)+self.delta_x),int(self.prop*(by+70)+self.delta_y)),
+                                                        (int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+70)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+110)+self.delta_x),int(self.prop*(by+70)+self.delta_y)),
+                                                       (int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+70)+self.delta_y)),
+                                                        (int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                        (int(self.prop*(lx+110)+self.delta_x),int(self.prop*(by+110)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+70)+self.delta_y)),
+                                                       (int(self.prop*(lx+190)+self.delta_x),int(self.prop*(by+70)+self.delta_y)),
+                                                        (int(self.prop*(lx+190)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                        (int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+110)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+110)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                       (int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                        (int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+150)+self.delta_y)),
+                                                        (int(self.prop*(lx+110)+self.delta_x),int(self.prop*(by+150)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                       (int(self.prop*(lx+190)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                        (int(self.prop*(lx+190)+self.delta_x),int(self.prop*(by+150)+self.delta_y)),
+                                                        (int(self.prop*(lx+150)+self.delta_x),int(self.prop*(by+150)+self.delta_y))), int(self.prop*(5)))
+        
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+160)+self.delta_y)),
+                                                       (int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+160)+self.delta_y)),
+                                                        (int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+200)+self.delta_y)),
+                                                        (int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+200)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+160)+self.delta_y)),
+                                                       (int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+160)+self.delta_y)),
+                                                        (int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+200)+self.delta_y)),
+                                                        (int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+200)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+160)+self.delta_y)),
+                                                       (int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+160)+self.delta_y)),
+                                                        (int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+200)+self.delta_y)),
+                                                        (int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+200)+self.delta_y))), int(self.prop*(5)))
+        
+
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+60)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                       (int(self.prop*(lx+100)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                        (int(self.prop*(lx+100)+self.delta_x),int(self.prop*(by+150)+self.delta_y)),
+                                                        (int(self.prop*(lx+60)+self.delta_x),int(self.prop*(by+150)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+200)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                       (int(self.prop*(lx+240)+self.delta_x),int(self.prop*(by+110)+self.delta_y)),
+                                                        (int(self.prop*(lx+240)+self.delta_x),int(self.prop*(by+150)+self.delta_y)),
+                                                        (int(self.prop*(lx+200)+self.delta_x),int(self.prop*(by+150)+self.delta_y))), int(self.prop*(5))) 
+        
+        
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+10)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                       (int(self.prop*(lx+50)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                        (int(self.prop*(lx+50)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+10)+self.delta_x),int(self.prop*(by+260)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+10)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                       (int(self.prop*(lx+50)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+50)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
+                                                        (int(self.prop*(lx+10)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+50)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                       (int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                        (int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+50)+self.delta_x),int(self.prop*(by+260)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+50)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                       (int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
+                                                        (int(self.prop*(lx+50)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                       (int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                        (int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+260)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                       (int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
+                                                        (int(self.prop*(lx+90)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                       (int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                        (int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+260)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                       (int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
+                                                        (int(self.prop*(lx+130)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                       (int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                        (int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+260)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                       (int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
+                                                        (int(self.prop*(lx+170)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                       (int(self.prop*(lx+250)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                        (int(self.prop*(lx+250)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+260)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                       (int(self.prop*(lx+250)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+250)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
+                                                        (int(self.prop*(lx+210)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+250)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                       (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by+220)+self.delta_y)),
+                                                        (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+250)+self.delta_x),int(self.prop*(by+260)+self.delta_y))), int(self.prop*(5)))
+        pygame.draw.polygon(self.screen, (120,120,120), ((int(self.prop*(lx+250)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                       (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by+260)+self.delta_y)),
+                                                        (int(self.prop*(lx+290)+self.delta_x),int(self.prop*(by+300)+self.delta_y)),
+                                                        (int(self.prop*(lx+250)+self.delta_x),int(self.prop*(by+300)+self.delta_y))), int(self.prop*(5)))
+          
         
         
 
