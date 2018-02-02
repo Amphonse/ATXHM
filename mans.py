@@ -2,7 +2,7 @@ import numpy as np
 import random,pygame
 import path_iso_copy
 import useful_fucs
-
+#hello
 #dont know not my code
 def convert_iso_dots(r):
     y = r[1]*32
