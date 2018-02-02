@@ -161,7 +161,8 @@ class Tile():
                     blit_coords = convert_iso(self.coords)
                     screen.blit(pygame.transform.scale(self.no_throw_image,(int(64*prop),int(32*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
         else:
-            screen.blit(self.undiscovered_image,convert_iso(self.coords))
+            blit_coords = convert_iso(self.coords)
+            screen.blit(pygame.transform.scale(self.undiscovered_image,(int(64*prop),int(32*prop))),(int(blit_coords[0]*prop+delta_x),int(blit_coords[1]*prop+delta_y)))
             
         #if self.visited == 3:
         #    screen.blit(pygame.image.load("3_black.png"),convert_iso(self.coords))
@@ -405,7 +406,7 @@ while True:
                                 for u in units:
                                     if u.selected:
                                         if u.can_throw(convert_iso(tile.coords),tiles)!= None:
-                                            print("ehhh")
+                                            #print("ehhh")
                                             tile.throwable = True
                             if event.button == 1:
                                 for i in selected:
@@ -442,7 +443,7 @@ while True:
                         for u in units:
                             if u.selected:
                                 if u.can_throw(convert_iso(tile.coords),tiles)!= None:
-                                    print("ehhh")
+                                    #print("ehhh")
                                     tile.throwable = True
                     if event.button == 1:
                         if new_turn == False:
