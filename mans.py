@@ -450,7 +450,7 @@ class mans():
         return floor
     
     def per_tick(self):
-        mpos = pygame.mouse.get_pos()
+        mpos = list(pygame.mouse.get_pos())
         mpos[0] = int((mpos[0]-self.delta_x)/self.prop)
         mpos[1] = int((mpos[1]-self.delta_y)/self.prop)
         self.inventory_pg(100, 100)
