@@ -515,8 +515,8 @@ class Unit(mans.mans):
         #print(math.sqrt(x**2+y**2))
         if math.sqrt(x**2+y**2) <= 5*self.strn/100:
             #print(self.coords)
-            self_grid = convert_iso_map(self.coords)
-            print(target_coords[0],"-",self_grid)
+            self_grid = convert_iso(self.coords,[0,0])
+            #print(target_coords[0],"-",self_grid)
             vect_x = target_coords[0]-self_grid[0]
             vect_y = target_coords[1]-self_grid[1]
             for i in range(50):
@@ -526,12 +526,14 @@ class Unit(mans.mans):
                 dy = self_grid[1] + int(vect_y*(i/50))
                 #print(dx,dy,self_grid[0],self_grid[1],int(vect_x*(i/50)),int(vect_y*(i/50)))
                 test_tile_coords = detect_clicked([dx,dy])
+                #print(test_tile_coords)
 
-                for t in tiles:
-                    #print(t,"ggdhllghfghf")
-                    if t.vert == True:
-                        if t.coords == test_tile_coords:
-                            can_throw = False
+                #for t in tiles:
+                #    #print(t,"ggdhllghfghf")
+                #    if t.vert == True:
+                #        if list(t.coords) == list(test_tile_coords):
+                #            print(list(t.coords),list(test_tile_coords))
+                #            can_throw = False
         else:
             can_throw = False
 

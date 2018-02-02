@@ -374,7 +374,7 @@ while True:
                                         other_mode = False
                                 else:
                                     other_mode = False
-                            if u.inv_pg == True:
+                            elif u.inv_pg == True:
                                 if u.in_x+10 < pos[0] and pos[0] <u.in_x + 290:
                                     if u.in_y-15 < pos[1] and pos[1]< u.in_y +300:
                                         other_mode = True
@@ -419,8 +419,8 @@ while True:
                                         #non_screen_coords = detect_clicked(tile.coords) 
                                         a = u.can_throw(convert_iso(tile.coords),tiles)
                                         if a!= None:
-                                            print(tile.coords[0],a[0],tile.coords[1],a[1])
-                                            if tile.coords[0] == a[0] and tile.coords[1] == a[1]:
+                                            print(tile.coords[0]-1,a[0],tile.coords[1],a[1])
+                                            if tile.coords[0]-1 == a[0] and tile.coords[1] == a[1]:
                                                 tile.throwable = True
 
                             if event.button == 1:
@@ -460,8 +460,8 @@ while True:
                                 
                                 a = u.can_throw(convert_iso(tile.coords),tiles)
                                 if a!= None:
-                                    print(tile.coords[0],a[0],tile.coords[1],a[1])
-                                    if tile.coords[0] == a[0] and tile.coords[1] == a[1]:
+                                    print(tile.coords[0]-1,a[0],tile.coords[1],a[1])
+                                    if tile.coords[0]-1 == a[0] and tile.coords[1] == a[1]:
                                         tile.throwable = True
 
                     if event.button == 1:
