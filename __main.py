@@ -366,20 +366,15 @@ while True:
                         elif u.vatss:
                             choosing_loc = True
                         if u.selected == True:
-                            if u.stats_page == True:
-                                if u.st_x < pos[0] and pos[0] <u.st_x + 300:
-                                    if u.st_y-30 < pos[1] and pos[1]< u.st_y +315:
+                                if u.st_x < pos[0] and pos[0] <u.st_x + 300 and u.st_y-30 < pos[1] and pos[1]< u.st_y +315:
+                                    if u.stats_page == True:
                                         other_mode = True
-                                    else:
-                                        other_mode = False
-                                else:
-                                    other_mode = False
-                            elif u.inv_pg == True:
-                                if u.in_x+10 < pos[0] and pos[0] <u.in_x + 290:
-                                    if u.in_y-15 < pos[1] and pos[1]< u.in_y +300:
+                            
+                                elif u.in_x+10 < pos[0] and pos[0] <u.in_x + 290 and u.in_y-15 < pos[1] and pos[1]< u.in_y +300:
+                                
+                                    if u.inv_pg == True:
                                         other_mode = True
-                                    else:
-                                        other_mode = False
+
                                 else:
                                     other_mode = False
                         #if u.throwing:
