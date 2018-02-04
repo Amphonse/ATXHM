@@ -170,6 +170,8 @@ class mans():
             dmg *= 1.5
         if self.limbs[location][2].health < 0:
             self.limbs[location][2] = armor(0,0,"Bare",0,9,0,0)
+        if self.limbs[location][3] == "Destroyed":
+            dmg = 0
         self.limbs[location][0] -= dmg
         print(self.name + " was hit in the "+location +" for "+str(dmg)+" Damage")
         self.health -= (dmg*self.limbs[location][1])*100/self.endurance
@@ -177,6 +179,12 @@ class mans():
         self.wounds +=((dmg*self.limbs[location][1])*100/self.endurance*2)/10
         self.wound += ((dmg*self.limbs[location][1])*100/self.endurance*2)/5
         self.shock += ((dmg*self.limbs[location][1])*100/self.endurance*2)*self.limbs[location][4]
+        if self.limbs[location][0] < 50:
+            self.limbs[location][3] = "Crippled"
+        if self.limbs[location][0] < 0:
+            self.limbs[location][3] = "Destroyed"
+            if location == "Head" or location == "Torso":
+                self.state = "Dead"
         if self.health<0:
             self.health=0
         self.mupdate()
@@ -216,6 +224,8 @@ class mans():
                 wep = weepons(0,0,"Fisto","Crushing","Melee",5)
             roll = random.random()*100
             roll += self.shock/10
+            if self.limbs[self.hand][3] == "Crippled" or self.limbs[self.arm][3]:
+                roll += 25
             if wep.atktype == "Melee":
                 self.margina = self.melee-roll
             elif wep.atktype == "Ranged":
@@ -346,26 +356,31 @@ class mans():
         if self.mpos[1] in range(int(self.prop*700+self.delta_y),int(self.prop*801+self.delta_y)):
                 if self.mpos[0] in range(int(self.prop*320+self.delta_x),int(self.prop*421+self.delta_x)):
                     self.hand = "Left Hand"
+                    self.arm = "Left Arm"
                     in_box = True
                 if self.mpos[0] in range(int(self.prop*860+self.delta_x),int(self.prop*961+self.delta_x)):
                     self.hand = "Right Hand"
+                    self.arm = "Right Arm"
                     in_box = True
         
         if in_box and not self.vatss and not self.chose_who and self.state == "Normal":
-            self.rhold = True
-            if isinstance(self.equipment[self.hand][0][0],weepons):
-                if self.equipment[self.hand][0][0].atktype == "Melee":
-                    self.draw_box([["Melee Attack","Attack"],["Throw","Throw"]])
-                    self.drawing = [["Throw","Throw"],["Melee Attack","Attack"]]
-                elif self.equipment[self.hand][0][0].atktype == "Ranged":
-                    self.draw_box([["Ranged Attack","Attack"],["Throw","Throw"]])
-                    self.drawing = [["Throw","Throw"],["Ranged Attack","Attack"]]
-            elif self.equipment[self.hand][0] == [None]:
-                self.draw_box([["Punch","Attack"],["Pick up","Pick"]])
-                self.drawing = [["Punch","Attack"],["Pick up","Pick"]]
+            if self.limbs[self.hand][3] != "Destroyed" and self.limbs[self.arm][3] != "Destroyed":
+                if isinstance(self.equipment[self.hand][0][0],weepons):
+                    if self.equipment[self.hand][0][0].atktype == "Melee":
+                        self.draw_box([["Melee Attack","Attack"],["Throw","Throw"]])
+                        self.drawing = [["Throw","Throw"],["Melee Attack","Attack"]]
+                    elif self.equipment[self.hand][0][0].atktype == "Ranged":
+                        self.draw_box([["Ranged Attack","Attack"],["Throw","Throw"]])
+                        self.drawing = [["Throw","Throw"],["Ranged Attack","Attack"]]
+                elif self.equipment[self.hand][0] == [None]:
+                    self.draw_box([["Punch","Attack"],["Pick up","Pick"]])
+                    self.drawing = [["Punch","Attack"],["Pick up","Pick"]]
+                else:
+                    self.drawing = [["Throw","Throw"]]
+                self.menu = True
             else:
-                self.drawing = [["Throw","Throw"]]
-            self.menu = True
+                self.drawing = None
+                self.menu =False
         else:
             self.drawing = None
             self.menu =False
