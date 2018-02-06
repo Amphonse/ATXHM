@@ -208,8 +208,6 @@ class Controler:
 
 #Load the map text that you want.
 t_map = mapr.get_map("map")
-w_map = mapr.get_map("map_w",1)
-print(w_map)
 
 #take the map text and convert it into a list of tile objects.
 tiles = {}
@@ -236,12 +234,12 @@ units[tuple(gerald.coords)] = (gerald)
 #units.append(barry)
 #units.append(gerald)
 selected = []
-floor_items = [mans.weepons(0,0,"Sword","Cutting","Melee",20,coords = [11,1])]
-#print(path_iso_copy.Pathfinding([0,0],[3,2],w_map,tiles))
+floor_items = [mans.weepons(0,0,"Sword","Cutting","Melee",200,coords = [11,1])]
+#print(path_iso_copy.Pathfinding([0,0],[3,2],tiles))
 clock = pygame.time.Clock()
 not_moving = True
 is_moving_counter = 0
-pf_info = path_iso_copy.convert_to_dict(w_map,tiles.values())
+pf_info = path_iso_copy.convert_to_dict(t_map,tiles.values())
 
 tall_tiles = []
 for tile in tiles.values():
@@ -284,8 +282,8 @@ for tile in tiles.values():
 #        if type(i) is unit.Enemy:
 #            second_blit.append(i)
 #blit_list = []
-#for i in range(len(w_map)):
-#    for k in range(len(w_map[0])):
+#for i in range(len):
+#    for k in range(len[0])):
 #        for j in blit_things:
 #            if j.coords[1] == k:
 #                blit_list.append(j)
@@ -412,14 +410,14 @@ while True:
                         else:
                             #if choosing_throwing:
                             for u in selected:
-                                for tile in tiles:
+                                for tile in tiles.keys():
 #
                                     #non_screen_coords = detect_clicked(tile.coords) 
-                                    a = u.can_throw(convert_iso(tile.coords),tiles)
+                                    a = u.can_throw(convert_iso(tile),tiles)
                                     if a!= None:
-                                        print(tile.coords[0]-1,a[0],tile.coords[1],a[1])
-                                        if tile.coords[0]-1 == a[0] and tile.coords[1] == a[1]:
-                                            tile.throwable = True
+                                        print(tile[0]-1,a[0],tile[1],a[1])
+                                        if tile[0]-1 == a[0] and tile[1] == a[1]:
+                                            tiles[tile].throwable = True
 
                             if event.button == 1:
                                 for i in selected:
@@ -453,13 +451,13 @@ while True:
                 #for the tooltip bit
                 else:
                     for u in selected:
-                        for tile in tiles:
+                        for tile in tiles.keys():
                             
-                            a = u.can_throw(convert_iso(tile.coords),tiles)
+                            a = u.can_throw(convert_iso(tile),tiles)
                             if a!= None:
-                                print(tile.coords[0]-1,a[0],tile.coords[1],a[1])
-                                if tile.coords[0]-1 == a[0] and tile.coords[1] == a[1]:
-                                    tile.throwable = True
+                                print(tile[0]-1,a[0],tile[1],a[1])
+                                if tile[0]-1 == a[0] and tile[1] == a[1]:
+                                    tiles[tile].throwable = True
 
                     if event.button == 1:
                         if new_turn == False:

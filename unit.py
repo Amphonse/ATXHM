@@ -317,7 +317,7 @@ class Enemy(mans.mans):
                                         self.move_vector[1] += 0.1
                                         self.move_vector[0] = round(self.move_vector[0],1)
                                         self.move_vector[1] = round(self.move_vector[1],1)
-                                       # print("move vector!",self.move_vector)
+# print("move vector!",self.move_vector)
                                         if math.sqrt(self.move_vector[0]**2) == 1 and math.sqrt(self.move_vector[1]**2) == 1:
                                             self.stage += 1
                                             self.coords[0]+=1
