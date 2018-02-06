@@ -52,14 +52,7 @@ def convert_to_dict(grid,tiles):
                             for tile in tiles:
                                 if tuple(tile.coords)==neighbour:
                                     if tile.is_Passable == True:
-                                        try:
-                                            vertex_dict[neighbour] = grid[neighbour[0]][neighbour[1]]
-                                            #print(vertex_dict[neighbour])
-                                        except:
-                                            #print("couldn't find ", vertex_dict[neighbour], "in grid.")
-                                            pass
-                                    else:
-                                        pass
+                                        vertex_dict[neighbour] = 1
                                         #print(tile.coords,"was unpassable")
                         distances[node] = vertex_dict
         #distances = {
